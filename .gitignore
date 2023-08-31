@@ -1,3 +1,4 @@
+# Directories
 /[Ll]ibrary/
 /[Tt]emp/
 /[Ll]ogs/
@@ -6,5 +7,6 @@
 /[Bb]uild/
 /[Bb]uilds/
 
+# Files
 .vsconfig
 *.sln
