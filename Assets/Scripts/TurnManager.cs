@@ -11,7 +11,6 @@ namespace TankGame
         [HideInInspector]
         public ETurnPhase turnPhase;
 
-        // Start is called before the first frame update
         void Start()
         {
             if (Instance == null)
@@ -22,7 +21,6 @@ namespace TankGame
             turnPhase = ETurnPhase.Move;
         }
 
-        // Update is called once per frame
         void Update()
         {
         
@@ -38,7 +36,9 @@ namespace TankGame
             UIManager.OnMovePlayer -= SwitchToShootPhase;
         }
 
-        /* PRIVATE METHODS */
+        /* 
+         * PRIVATE METHODS 
+         */
         private void SwitchTurns()
         {
             // Cycle through player and enemies
@@ -46,7 +46,7 @@ namespace TankGame
 
         private void SwitchToShootPhase()
         {
-            //turnPhase = ETurnPhase.Shoot;
+            turnPhase = ETurnPhase.Shoot;
         }
     }
 }

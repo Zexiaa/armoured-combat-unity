@@ -17,10 +17,7 @@ namespace TankGame
 
         [SerializeField]
         private GameObject moveDestination;
-        //[SerializeField]
-        //private GameObject playerVehicle;
 
-        // Start is called before the first frame update
         void Start()
         {
             actions = new Controls();
@@ -36,7 +33,7 @@ namespace TankGame
                 cursorPos = context.ReadValue<Vector2>();
             };
 
-            moveDestination.SetActive(false);
+            //moveDestination.SetActive(false);
         }
 
         void Update()
@@ -44,7 +41,9 @@ namespace TankGame
             isCursorOverUI = EventSystem.current.IsPointerOverGameObject();
         }
 
-        /* PRIVATE METHODS */
+        /* 
+         * PRIVATE METHODS 
+         */
         private void PerformLeftClick()
         {
             switch (TurnManager.Instance.turnPhase)

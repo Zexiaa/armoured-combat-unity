@@ -30,9 +30,6 @@ namespace TankGame
         [SerializeField]
         private float maxSpeed = 1.0f;
 
-
-
-        // Start is called before the first frame update
         void Start()
         {
             actions = new Controls();
@@ -45,7 +42,6 @@ namespace TankGame
 
         }
 
-        // Update is called once per frame
         void Update()
         {
             CheckCursorPosition();
