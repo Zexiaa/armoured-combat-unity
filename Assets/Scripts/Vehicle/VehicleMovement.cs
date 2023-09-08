@@ -3,32 +3,24 @@ using UnityEngine;
 
 namespace TankGame
 {
-    public class Vehicle : MonoBehaviour
+    public abstract class VehicleMovement : MonoBehaviour
     {
         [SerializeField]
-        private Transform target;
-
-        [SerializeField]
-        private float speed = 5;
+        protected float speed = 5;
         
         private Vector3[] path;
-        private int targetIndex;
+        private int destinationIndex;
         
-        void Start()
-        {
-            NavigationSystem.NavigationManager.CalculatePath(transform.position, target.position, OnPathFound);
-        }
-
         public void OnDrawGizmos()
         {
             if (path != null)
             {
-                for (int i = targetIndex; i < path.Length; i++)
+                for (int i = destinationIndex; i < path.Length; i++)
                 {
                     Gizmos.color = Color.yellow;
                     Gizmos.DrawCube(path[i], Vector3.one);
 
-                    if (i == targetIndex)
+                    if (i == destinationIndex)
                         Gizmos.DrawLine(transform.position, path[i]);
                     else
                         Gizmos.DrawLine(path[i - 1], path[i]);
@@ -46,6 +38,12 @@ namespace TankGame
                 path = newPath;
                 StopCoroutine("FollowPath");
                 StartCoroutine("FollowPath");
+
+                Debug.Log("Path coords: ");
+                for (int i = 0; i < path.Length; i++)
+                {
+                    Debug.Log(path[i]);
+                }
             }
         }
 
@@ -59,22 +57,24 @@ namespace TankGame
         private IEnumerator FollowPath()
         {
             Vector3 currentWaypoint = path[0];
+            destinationIndex = 0;
 
             while (true)
             {
                 // When vehicle reaches next waypoint
                 if (transform.position == currentWaypoint)
                 {
-                    targetIndex++;
+                    destinationIndex++;
 
                     // Vehicle reached end
-                    if (targetIndex >= path.Length)
+                    if (destinationIndex >= path.Length)
                         yield break;
 
-                    currentWaypoint = path[targetIndex];
+                    currentWaypoint = path[destinationIndex];
                 }
 
                 transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+                Debug.Log("Moving to: " + currentWaypoint);
                 
                 yield return null;
             }

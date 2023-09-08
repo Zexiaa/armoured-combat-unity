@@ -2,27 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 namespace TankGame
 {
-    [Obsolete()]
-    public class PlayerVehicleNavigation : MonoBehaviour
+    public class PlayerMovement : VehicleMovement
     {
-
-        NavMeshAgent agent;
-
         [SerializeField]
-        private GameObject moveDestination;
-
-        void Start()
-        {
-            agent = GetComponent<NavMeshAgent>();
-        }
-
-        void Update()
-        {
-        }
+        private GameObject moveMarker;
 
         void OnEnable()
         {
@@ -39,7 +25,7 @@ namespace TankGame
          */
         private void MovePlayerVehicle()
         {
-            agent.destination = moveDestination.transform.position;
+            NavigationSystem.NavigationManager.CalculatePath(transform.position, moveMarker.transform.position, OnPathFound);
         }
     }
 }

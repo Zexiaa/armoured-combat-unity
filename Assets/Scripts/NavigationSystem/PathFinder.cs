@@ -133,8 +133,13 @@ namespace TankGame.NavigationSystem
                     path[i - 1].yCoord - path[i].yCoord
                     );
 
+                // If still a straight line don't add waypoint
+                // else extend straight line
                 if (directionNew != directionOld)
+                {
+                    Debug.Log("Adding waypoint at " + path[i].worldPosition);
                     waypoints.Add(path[i].worldPosition);
+                }
                 
                 directionOld = directionNew;
             }

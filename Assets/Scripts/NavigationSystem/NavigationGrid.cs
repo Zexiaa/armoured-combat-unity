@@ -29,6 +29,11 @@ namespace TankGame.NavigationSystem
 
         private float nodeDiameter;
 
+        [Header("====Debug====")]
+
+        [SerializeField]
+        private GameObject moveMarker;
+
         public int MaxSize
         {
             get { return gridSizeX * gridSizeY; }
@@ -54,12 +59,14 @@ namespace TankGame.NavigationSystem
                 return;
 
             GridNode playerNodePosition = WorldPositionToNode(playerVehicle.position);
+            GridNode moveMarkerNodePosition = WorldPositionToNode(moveMarker.transform.position);
 
             foreach (GridNode n in grid)
             {
                 Gizmos.color = n.walkable ? Color.white : Color.red;
 
                 if (n == playerNodePosition) Gizmos.color = Color.green;
+                if (n == moveMarkerNodePosition) Gizmos.color = Color.yellow;
 
                 Gizmos.DrawCube(n.worldPosition, Vector3.one * nodeDiameter);
             }
@@ -99,8 +106,6 @@ namespace TankGame.NavigationSystem
         {
             List<GridNode> neighbours = new List<GridNode>();
 
-            Debug.Log($"Getting neighbours of node {node.xCoord}, {node.yCoord}");
-
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
 
@@ -108,7 +113,6 @@ namespace TankGame.NavigationSystem
 
                     if (node.xCoord + x >= 0 && node.xCoord + x < gridSizeX &&
                     node.yCoord + y >= 0 && node.yCoord + y < gridSizeY)
-                        Debug.Log($"Adding neighour {node.xCoord + x}, {node.yCoord + y}");
                         neighbours.Add(grid[node.xCoord + x, node.yCoord + y]);
                 }
             }

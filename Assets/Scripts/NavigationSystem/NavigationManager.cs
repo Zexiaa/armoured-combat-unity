@@ -92,9 +92,7 @@ namespace TankGame.NavigationSystem
                 pathFinder.StartFindPath(currentPathRequest.pathStart, currentPathRequest.pathEnd);
             }
             else
-            {
-                Debug.LogWarning("Problem processing next path!");
-            }
+                Debug.LogWarning("No next path request found.");
         }
     }
 }

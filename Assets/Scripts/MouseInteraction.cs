@@ -9,14 +9,13 @@ namespace TankGame
 {
     public class MouseInteraction : MonoBehaviour
     {
-        Controls actions;
+        private Controls actions;
 
         private Vector2 cursorPos;
-
         private bool isCursorOverUI;
 
         [SerializeField]
-        private GameObject moveDestination;
+        private GameObject moveMarker;
 
         void Start()
         {
@@ -33,7 +32,7 @@ namespace TankGame
                 cursorPos = context.ReadValue<Vector2>();
             };
 
-            //moveDestination.SetActive(false);
+            moveMarker.SetActive(false);
         }
 
         void Update()
@@ -44,12 +43,14 @@ namespace TankGame
         /* 
          * PRIVATE METHODS 
          */
+
+
         private void PerformLeftClick()
         {
             switch (TurnManager.Instance.turnPhase)
             {
                 case ETurnPhase.Move:
-                    MarkMovementPoint();
+                    SetMoveMarker();
                     return;
 
                 default:
@@ -57,7 +58,10 @@ namespace TankGame
             }
         }
 
-        private void MarkMovementPoint()
+        /// <summary>
+        /// Sets move marker to click position
+        /// </summary>
+        private void SetMoveMarker()
         {
             Ray ray = Camera.main.ScreenPointToRay(cursorPos);
             RaycastHit hit;
@@ -65,8 +69,8 @@ namespace TankGame
             if (Physics.Raycast(ray, out hit, 100) &&
                 !isCursorOverUI)
             {
-                moveDestination.SetActive(true);
-                moveDestination.transform.position = hit.point;
+                moveMarker.SetActive(true);
+                moveMarker.transform.position = hit.point;
             }
         }
     }
