@@ -6,17 +6,19 @@ namespace TankGame.NavigationSystem
     public class GridNode : IHeapItem<GridNode>
     {
         public bool walkable;
+
         public Vector3 worldPosition;
 
+        // Node coords in world grid
         public int xCoord;
         public int yCoord;
 
-        public int gCost;
-        public int hCost;
+        public int gCost; // distance from starting node
+        public int hCost; // (heuristic) distance from end node
 
         public GridNode parent;
 
-        int heapIndex;
+        private int heapIndex;
 
         public int fCost
         {
@@ -50,10 +52,9 @@ namespace TankGame.NavigationSystem
         {
             int compare = fCost.CompareTo(otherNode.fCost);
 
+            // If both fCosts are the same, compare by hCost
             if (compare == 0)
-            {
                 compare = hCost.CompareTo(otherNode.hCost);
-            }
 
             return -compare;
         }

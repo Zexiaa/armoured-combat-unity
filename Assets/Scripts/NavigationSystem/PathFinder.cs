@@ -1,11 +1,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace TankGame.NavigationSystem
 {
-    // Referenced from SebLague (https://github.com/SebLague/Pathfinding/tree/master)
+    /// <summary>
+    /// Component for calculating path
+    /// <para>
+    /// Referenced from SebLague (https://github.com/SebLague/Pathfinding/tree/master)
+    /// </para>
+    /// </summary>
+    [RequireComponent(typeof(NavigationGrid))]
+    [RequireComponent(typeof(NavigationManager))]
     public class PathFinder : MonoBehaviour
     {
         private NavigationGrid grid;
@@ -17,6 +25,9 @@ namespace TankGame.NavigationSystem
             navManager = GetComponent<NavigationManager>();
         }
 
+        /// <summary>
+        /// Starts coroutine for pathfinding
+        /// </summary>
         public void StartFindPath(Vector3 startPosition, Vector3 endPosition)
         {
             StartCoroutine(AStarPathfind(startPosition, endPosition));
@@ -26,11 +37,14 @@ namespace TankGame.NavigationSystem
          * PRIVATE METHODS
          */
 
+        /// <summary>
+        /// Calculate path using A* algorithm
+        /// </summary>
         private IEnumerator AStarPathfind(Vector3 startPosition, Vector3 endPosition)
         {
             GridNode startNode = grid.WorldPositionToNode(startPosition);
             GridNode endNode = grid.WorldPositionToNode(endPosition);
-
+            
             if (!startNode.walkable && !endNode.walkable)
                 yield break;
 
@@ -47,12 +61,14 @@ namespace TankGame.NavigationSystem
 
                 doneNodes.Add(currentNode);
 
+                // When node calculation reaches end destination, stop loop
                 if (currentNode == endNode)
                 {
                     pathSuccess = true;
                     break;
                 }
 
+                // Calculate neighbouring node costs
                 foreach (GridNode neighbour in grid.GetNodeNeighbours(currentNode))
                 {
                     if (!neighbour.walkable || doneNodes.Contains(neighbour)) continue;
@@ -71,12 +87,17 @@ namespace TankGame.NavigationSystem
 
             yield return null;
 
+            // Get the shortest path waypoints
             if (pathSuccess)
                 waypoints = RetracePath(startNode, endNode);
 
             navManager.FinishedCalculatingPath(waypoints, pathSuccess);
         }
 
+        /// <summary>
+        /// Collate path waypoints between end destination to start position
+        /// </summary>
+        /// <returns>Waypoint nodes to end destination</returns>
         private Vector3[] RetracePath(GridNode startNode,  GridNode endNode)
         {
             List<GridNode> path = new List<GridNode>();
@@ -87,12 +108,19 @@ namespace TankGame.NavigationSystem
                 path.Add(currentNode);
                 currentNode = currentNode.parent;
             }
+
+            // Simplify waypoint path
             Vector3[] waypoints = SimplifyPath(path);
             Array.Reverse(waypoints);
 
             return waypoints;
         }
 
+        /// <summary>
+        /// Removes redundant waypoints in the middle of a straight paths.
+        /// </summary>
+        /// <param name="path">Calculated grid node path</param>
+        /// <returns>Array of world position waypoints</returns>
         private Vector3[] SimplifyPath(List<GridNode> path)
         {
             List<Vector3> waypoints = new List<Vector3>();
@@ -114,6 +142,12 @@ namespace TankGame.NavigationSystem
             return waypoints.ToArray();
         }
 
+        /// <summary>
+        /// Calculate A* path cost to node
+        /// </summary>
+        /// <param name="nodeA">Start grid node</param>
+        /// <param name="nodeB">Grid node to calculate to</param>
+        /// <returns>Distance int</returns>
         private int GetDistanceBetweenNodes(GridNode nodeA, GridNode nodeB)
         {
             int distX = Mathf.Abs(nodeA.xCoord - nodeB.xCoord);

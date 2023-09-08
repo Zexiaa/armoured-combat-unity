@@ -19,38 +19,6 @@ namespace TankGame
             NavigationSystem.NavigationManager.CalculatePath(transform.position, target.position, OnPathFound);
         }
 
-        public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
-        {
-            if (pathSuccessful)
-            {
-                path = newPath;
-                StopCoroutine("FollowPath");
-                StartCoroutine("FollowPath");
-            }
-        }
-
-        IEnumerator FollowPath()
-        {
-            Vector3 currentWaypoint = path[0];
-
-            while (true)
-            {
-                if (transform.position == currentWaypoint)
-                {
-                    targetIndex++;
-
-                    if (targetIndex >= path.Length)
-                    {
-                        yield break;
-                    }
-                    currentWaypoint = path[targetIndex];
-                }
-
-                transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-                yield return null;
-            }
-        }
-
         public void OnDrawGizmos()
         {
             if (path != null)
@@ -65,6 +33,50 @@ namespace TankGame
                     else
                         Gizmos.DrawLine(path[i - 1], path[i]);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Function callback that starts coroutine to move vehicle to destination if path found.
+        /// </summary>
+        public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
+        {
+            if (pathSuccessful)
+            {
+                path = newPath;
+                StopCoroutine("FollowPath");
+                StartCoroutine("FollowPath");
+            }
+        }
+
+        /*
+         * PRIVATE METHODS
+         */
+
+        /// <summary>
+        /// Move vehicle along calculated path every frame
+        /// </summary>
+        private IEnumerator FollowPath()
+        {
+            Vector3 currentWaypoint = path[0];
+
+            while (true)
+            {
+                // When vehicle reaches next waypoint
+                if (transform.position == currentWaypoint)
+                {
+                    targetIndex++;
+
+                    // Vehicle reached end
+                    if (targetIndex >= path.Length)
+                        yield break;
+
+                    currentWaypoint = path[targetIndex];
+                }
+
+                transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
+                
+                yield return null;
             }
         }
     }

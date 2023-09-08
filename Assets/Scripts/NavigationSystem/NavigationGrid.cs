@@ -6,8 +6,10 @@ namespace TankGame.NavigationSystem
     /// <summary>
     /// Component to create a Grid system used for navigation.
     /// Place in a Unity GameObject.
-    /// </summary>
+    /// <para>
     /// Referenced from SebLague (https://github.com/SebLague/Pathfinding/tree/master)
+    /// </para>
+    /// </summary>
     public class NavigationGrid : MonoBehaviour
     {
         [SerializeField] 

@@ -46,7 +46,7 @@ namespace TankGame
 
         private void SwitchToShootPhase()
         {
-            turnPhase = ETurnPhase.Shoot;
+            //turnPhase = ETurnPhase.Shoot;
         }
     }
 }
