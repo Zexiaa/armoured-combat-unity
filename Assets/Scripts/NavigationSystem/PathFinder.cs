@@ -75,14 +75,20 @@ namespace TankGame.NavigationSystem
                 {
                     if (!neighbour.walkable || doneNodes.Contains(neighbour)) continue;
 
-                    int newMoveCostToNeighbour = currentNode.gCost + GetDistanceBetweenNodes(currentNode, neighbour);
+                    int newMoveCostToNeighbour = 
+                        currentNode.gCost + GetDistanceBetweenNodes(currentNode, neighbour) 
+                        + neighbour.movementPenalty;
+
                     if (newMoveCostToNeighbour < neighbour.gCost || !openNodes.Contains(neighbour))
                     {
                         neighbour.gCost = newMoveCostToNeighbour;
                         neighbour.hCost = GetDistanceBetweenNodes(neighbour, endNode);
                         neighbour.parent = currentNode;
                         
-                        if (!openNodes.Contains(neighbour)) openNodes.Add(neighbour);
+                        if (!openNodes.Contains(neighbour)) 
+                            openNodes.Add(neighbour);
+                        else
+                            openNodes.UpdateItem(neighbour);
                     }
                 }
             }

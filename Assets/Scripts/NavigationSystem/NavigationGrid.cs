@@ -12,8 +12,16 @@ namespace TankGame.NavigationSystem
     /// </summary>
     public class NavigationGrid : MonoBehaviour
     {
+        [Header("Terrain")]
         [SerializeField] 
         private LayerMask nonWalkableMask;
+
+        [SerializeField]
+        private TerrainType[] terrainModifiers;
+        private LayerMask walkableMask;
+        Dictionary<int, int> walkableTerrainDict = new Dictionary<int, int>();
+
+        [Header("Grid Settings")]
 
         [SerializeField]
         private Vector2 gridWorldSize;
@@ -21,15 +29,15 @@ namespace TankGame.NavigationSystem
         [SerializeField]
         private float nodeRadius;
 
-        [SerializeField]
-        private Transform playerVehicle;
-
         GridNode[,] grid;
         private int gridSizeX, gridSizeY;
 
         private float nodeDiameter;
 
         [Header("====Debug====")]
+
+        [SerializeField]
+        private Transform playerVehicle;
 
         [SerializeField]
         private GameObject moveMarker;
@@ -46,6 +54,12 @@ namespace TankGame.NavigationSystem
             // Calculate number of grids for each side
             gridSizeX = Mathf.FloorToInt(gridWorldSize.x / nodeDiameter);
             gridSizeY = Mathf.FloorToInt(gridWorldSize.y / nodeDiameter);
+
+            foreach (TerrainType terrain in terrainModifiers)
+            {
+                walkableMask.value |= terrain.terrainMask.value;
+                walkableTerrainDict.Add((int) Mathf.Log(terrain.terrainMask.value, 2), terrain.terrainPenalty);
+            }
 
             CreateGrid();
         }
@@ -144,7 +158,19 @@ namespace TankGame.NavigationSystem
 
                     bool walkable = !Physics.CheckSphere(nodeWorldPosition, nodeRadius, nonWalkableMask);
 
-                    grid[x, y] = new GridNode(walkable, nodeWorldPosition, x, y);
+                    // Add terrain penalty
+                    int movementPenalty = 0;
+
+                    if (walkable)
+                    {
+                        Ray ray = new Ray(nodeWorldPosition + Vector3.up * 20, Vector3.down);
+                        RaycastHit hit;
+
+                        if (Physics.Raycast(ray, out hit, 50, walkableMask))
+                            walkableTerrainDict.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
+                    }
+
+                    grid[x, y] = new GridNode(walkable, nodeWorldPosition, x, y, movementPenalty);
                 }
             }
         }

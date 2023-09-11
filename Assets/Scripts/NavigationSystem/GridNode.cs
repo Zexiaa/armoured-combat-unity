@@ -7,6 +7,8 @@ namespace TankGame.NavigationSystem
     {
         public bool walkable;
 
+        public int movementPenalty;
+
         public Vector3 worldPosition;
 
         // Node coords in world grid
@@ -40,12 +42,13 @@ namespace TankGame.NavigationSystem
             }
         }
 
-        public GridNode(bool _walkable, Vector3 _worldPosition, int _xCoord, int _yCoord)
+        public GridNode(bool _walkable, Vector3 _worldPosition, int _xCoord, int _yCoord, int _movementPenalty)
         {
             walkable = _walkable;
             worldPosition = _worldPosition;
             xCoord = _xCoord;
             yCoord = _yCoord;
+            movementPenalty = _movementPenalty;
         }
 
         public int CompareTo(GridNode otherNode)
