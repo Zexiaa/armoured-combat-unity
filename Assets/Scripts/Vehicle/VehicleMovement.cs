@@ -38,12 +38,6 @@ namespace TankGame
                 path = newPath;
                 StopCoroutine("FollowPath");
                 StartCoroutine("FollowPath");
-
-                Debug.Log("Path coords: ");
-                for (int i = 0; i < path.Length; i++)
-                {
-                    Debug.Log(path[i]);
-                }
             }
         }
 
@@ -74,7 +68,7 @@ namespace TankGame
                 }
 
                 transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-                Debug.Log("Moving to: " + currentWaypoint);
+                //Debug.Log("Moving to: " + currentWaypoint);
                 
                 yield return null;
             }

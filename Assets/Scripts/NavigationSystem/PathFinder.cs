@@ -44,7 +44,9 @@ namespace TankGame.NavigationSystem
         {
             GridNode startNode = grid.WorldPositionToNode(startPosition);
             GridNode endNode = grid.WorldPositionToNode(endPosition);
-            
+
+            Debug.Log("Destination at: " + endNode.worldPosition);
+
             if (!startNode.walkable && !endNode.walkable)
                 yield break;
 
@@ -95,9 +97,9 @@ namespace TankGame.NavigationSystem
         }
 
         /// <summary>
-        /// Collate path waypoints between end destination to start position
+        /// Get path waypoints between end destination to start position
         /// </summary>
-        /// <returns>Waypoint nodes to end destination</returns>
+        /// <returns>Array of waypoint nodes to end destination</returns>
         private Vector3[] RetracePath(GridNode startNode,  GridNode endNode)
         {
             List<GridNode> path = new List<GridNode>();
@@ -106,6 +108,8 @@ namespace TankGame.NavigationSystem
             while (currentNode != startNode)
             {
                 path.Add(currentNode);
+                //Debug.Log("Path node at: " + currentNode.worldPosition);
+
                 currentNode = currentNode.parent;
             }
 
@@ -117,7 +121,7 @@ namespace TankGame.NavigationSystem
         }
 
         /// <summary>
-        /// Removes redundant waypoints in the middle of a straight paths.
+        /// Removes redundant waypoints in the middle of straight paths
         /// </summary>
         /// <param name="path">Calculated grid node path</param>
         /// <returns>Array of world position waypoints</returns>
@@ -126,6 +130,7 @@ namespace TankGame.NavigationSystem
             List<Vector3> waypoints = new List<Vector3>();
             Vector2 directionOld = Vector2.zero;
 
+            // Check through calculated path
             for (int i = 1; i < path.Count; i++)
             {
                 Vector2 directionNew = new Vector2(
@@ -133,12 +138,11 @@ namespace TankGame.NavigationSystem
                     path[i - 1].yCoord - path[i].yCoord
                     );
 
-                // If still a straight line don't add waypoint
-                // else extend straight line
+                // If direction changes, add as waypoint
                 if (directionNew != directionOld)
                 {
-                    Debug.Log("Adding waypoint at " + path[i].worldPosition);
-                    waypoints.Add(path[i].worldPosition);
+                    waypoints.Add(path[i-1].worldPosition);
+                    //Debug.Log("Added waypoint: " + path[i].worldPosition);
                 }
                 
                 directionOld = directionNew;

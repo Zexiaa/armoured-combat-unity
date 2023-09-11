@@ -1349,7 +1349,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   gridWorldSize: {x: 41, y: 41}
-  nodeRadius: 1
+  nodeRadius: 0.5
   playerVehicle: {fileID: 396608842}
   moveMarker: {fileID: 8094985680336349133}
 --- !u!4 &1784640308
