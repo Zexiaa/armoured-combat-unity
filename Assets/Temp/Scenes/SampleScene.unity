@@ -1804,11 +1804,12 @@ MonoBehaviour:
   nonWalkableMask:
     serializedVersion: 2
     m_Bits: 64
+  obstacleProximityPenalty: 10
   terrainModifiers:
   - terrainMask:
       serializedVersion: 2
       m_Bits: 256
-    terrainPenalty: 10
+    terrainPenalty: 6
   - terrainMask:
       serializedVersion: 2
       m_Bits: 128

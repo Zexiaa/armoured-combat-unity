@@ -17,7 +17,11 @@ namespace TankGame.NavigationSystem
         private LayerMask nonWalkableMask;
 
         [SerializeField]
+        private int obstacleProximityPenalty = 10;
+
+        [SerializeField]
         private TerrainType[] terrainModifiers;
+
         private LayerMask walkableMask;
         Dictionary<int, int> walkableTerrainDict = new Dictionary<int, int>();
 
@@ -172,16 +176,14 @@ namespace TankGame.NavigationSystem
                     // Add terrain penalty
                     int movementPenalty = 0;
 
-                    if (walkable)
-                    {
-                        Ray ray = new Ray(nodeWorldPosition + Vector3.up * 20, Vector3.down);
-                        RaycastHit hit;
+                    Ray ray = new Ray(nodeWorldPosition + Vector3.up * 20, Vector3.down);
+                    RaycastHit hit;
 
-                        if (Physics.Raycast(ray, out hit, 50, walkableMask))
-                            walkableTerrainDict.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
-                    }
+                    if (Physics.Raycast(ray, out hit, 50, walkableMask))
+                        walkableTerrainDict.TryGetValue(hit.collider.gameObject.layer, out movementPenalty);
 
-                    Debug.Log(movementPenalty);
+                    if (!walkable) movementPenalty += obstacleProximityPenalty;
+
                     grid[x, y] = new GridNode(walkable, nodeWorldPosition, x, y, movementPenalty);
                 }
             }
