@@ -211,7 +211,7 @@ namespace TankGame.NavigationSystem
                 {
                     int kernelCell = Mathf.Clamp(k, 0, gridSizeX - 1);
 
-                    horizontalPenalties[kernelCell, y] += grid[kernelCell, y].movementPenalty;
+                    horizontalPenalties[0, y] += grid[kernelCell, y].movementPenalty;
                 }
 
                 // Other columns
@@ -234,8 +234,10 @@ namespace TankGame.NavigationSystem
                 {
                     int kernelCell = Mathf.Clamp(k, 0, gridSizeX - 1);
 
-                    verticalPenalties[x, kernelCell] += horizontalPenalties[x, kernelCell];
+                    verticalPenalties[x, 0] += horizontalPenalties[x, kernelCell];
                 }
+
+                grid[x, 0].movementPenalty = Mathf.RoundToInt(verticalPenalties[x, 0] / (float)(kernelSize * kernelSize));
 
                 // Other rows
                 for (int y = 1; y < gridSizeY; y++)
