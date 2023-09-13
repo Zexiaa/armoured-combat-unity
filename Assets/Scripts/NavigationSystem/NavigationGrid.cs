@@ -25,6 +25,9 @@ namespace TankGame.NavigationSystem
         private LayerMask walkableMask;
         Dictionary<int, int> walkableTerrainDict = new Dictionary<int, int>();
 
+        [SerializeField]
+        private int blurRadius = 3;
+
         [Header("Grid Settings")]
 
         [SerializeField]
@@ -188,7 +191,7 @@ namespace TankGame.NavigationSystem
                 }
             }
 
-            BlurPenaltyMap(3);
+            BlurPenaltyMap(blurRadius);
         }
 
         /// <summary>

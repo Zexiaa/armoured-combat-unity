@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace TankGame
@@ -25,7 +23,29 @@ namespace TankGame
          */
         private void MovePlayerVehicle()
         {
+            //StartCoroutine(UpdatePath());
             NavigationSystem.NavigationManager.CalculatePath(transform.position, moveMarker.transform.position, OnPathFound);
         }
+
+        //private IEnumerator UpdatePath()
+        //{
+        //    //if (Time.timeSinceLevelLoad < .3f) yield return new WaitForSeconds(.3f);
+
+        //    NavigationSystem.NavigationManager.CalculatePath(transform.position, moveMarker.transform.position, OnPathFound);
+
+        //    float sqrMoveThreshold = DistanceMovedThreshold * DistanceMovedThreshold;
+        //    Vector3 targetPosOld = moveMarker.transform.position;
+
+        //    while (true)
+        //    {
+        //        yield return new WaitForSeconds(MinPathUpdateTime);
+
+        //        if ((moveMarker.transform.position - targetPosOld).sqrMagnitude > sqrMoveThreshold)
+        //        {
+        //            NavigationSystem.NavigationManager.CalculatePath(transform.position, moveMarker.transform.position, OnPathFound);
+        //            targetPosOld = moveMarker.transform.position;
+        //        }
+        //    }
+        //}
     }
 }

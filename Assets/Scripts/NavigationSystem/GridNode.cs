@@ -2,7 +2,12 @@ using UnityEngine;
 
 namespace TankGame.NavigationSystem
 {
-    // Referenced from SebLague (https://github.com/SebLague/Pathfinding/tree/master)
+    /// <summary>
+    /// Node object that makes up a grid for pathfinding
+    /// <para>
+    /// Referenced from SebLague (https://github.com/SebLague/Pathfinding/tree/master)
+    /// </para>
+    /// </summary>
     public class GridNode : IHeapItem<GridNode>
     {
         public bool walkable;

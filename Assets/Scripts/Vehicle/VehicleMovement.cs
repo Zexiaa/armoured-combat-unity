@@ -1,41 +1,42 @@
 using System.Collections;
 using UnityEngine;
+using TankGame.NavigationSystem;
 
 namespace TankGame
 {
     public abstract class VehicleMovement : MonoBehaviour
     {
+        protected const float DistanceMovedThreshold = .5f;
+        protected const float MinPathUpdateTime = .2f;
+
         [SerializeField]
         protected float speed = 5;
+
+        [SerializeField]
+        protected float turnDistance = 5;
         
-        private Vector3[] path;
-        private int destinationIndex;
+        [SerializeField]
+        protected float turnSpeed = 3;
+
+        [SerializeField]
+        protected float stopDistance = 3;
+
+        Path path;
         
         public void OnDrawGizmos()
         {
             if (path != null)
-            {
-                for (int i = destinationIndex; i < path.Length; i++)
-                {
-                    Gizmos.color = Color.yellow;
-                    Gizmos.DrawCube(path[i], Vector3.one);
-
-                    if (i == destinationIndex)
-                        Gizmos.DrawLine(transform.position, path[i]);
-                    else
-                        Gizmos.DrawLine(path[i - 1], path[i]);
-                }
-            }
+                path.DrawWithGizmos();
         }
 
         /// <summary>
         /// Function callback that starts coroutine to move vehicle to destination if path found.
         /// </summary>
-        public void OnPathFound(Vector3[] newPath, bool pathSuccessful)
+        public void OnPathFound(Vector3[] waypoints, bool pathSuccessful)
         {
             if (pathSuccessful)
             {
-                path = newPath;
+                path = new Path(waypoints, transform.position, turnDistance, stopDistance);
                 StopCoroutine("FollowPath");
                 StartCoroutine("FollowPath");
             }
@@ -50,25 +51,45 @@ namespace TankGame
         /// </summary>
         private IEnumerator FollowPath()
         {
-            Vector3 currentWaypoint = path[0];
-            destinationIndex = 0;
+            bool isFollowingPath = true;
+            int pathIndex = 0;
 
-            while (true)
+            transform.LookAt(path.lookPoints[0]);
+
+            float speedPercent = 1;
+
+            while (isFollowingPath)
             {
-                // When vehicle reaches next waypoint
-                if (transform.position == currentWaypoint)
+                Vector2 pos2D = new Vector2(transform.position.x, transform.position.z);
+
+                // When vehicle has passed the next waypoint turn boundary 
+                while (path.turnBoundaries[pathIndex].hasCrossedLine(pos2D))
                 {
-                    destinationIndex++;
-
-                    // Vehicle reached end
-                    if (destinationIndex >= path.Length)
+                    if (pathIndex == path.finishLineIndex)
+                    {
+                        isFollowingPath = false;
                         yield break;
-
-                    currentWaypoint = path[destinationIndex];
+                    }
+                    
+                    pathIndex++;
                 }
 
-                transform.position = Vector3.MoveTowards(transform.position, currentWaypoint, speed * Time.deltaTime);
-                //Debug.Log("Moving to: " + currentWaypoint);
+                // Slow down before end
+                if (pathIndex >= path.slowDownIndex && stopDistance > 0)
+                {
+                    speedPercent = 
+                        Mathf.Clamp01(path.turnBoundaries[path.finishLineIndex].DistanceFromPoint(pos2D) / stopDistance);
+                        
+                    if (speedPercent < 0.01f)
+                    {
+                        isFollowingPath = false;
+                    }
+                }
+
+                // Perform vehicle movement
+                Quaternion targetRotation = Quaternion.LookRotation(path.lookPoints[pathIndex] - transform.position);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+                transform.Translate(Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
                 
                 yield return null;
             }

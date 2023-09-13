@@ -588,6 +588,7 @@ GameObject:
   m_Component:
   - component: {fileID: 396608842}
   - component: {fileID: 396608843}
+  - component: {fileID: 396608844}
   m_Layer: 0
   m_Name: Player Tank
   m_TagString: Untagged
@@ -624,8 +625,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bd340d356891214bad8c22e77af2700, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  speed: 10
+  turnDistance: 1
+  turnSpeed: 6
+  stopDistance: 2
   moveMarker: {fileID: 8094985680336349133}
+--- !u!65 &396608844
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 396608841}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.74440765, y: 0.8063278, z: 1.1575165}
+  m_Center: {x: 0.00044441223, y: 0.5395155, z: 0.005027771}
 --- !u!1 &420864816
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,7 +662,6 @@ GameObject:
   - component: {fileID: 420864817}
   - component: {fileID: 420864820}
   - component: {fileID: 420864819}
-  - component: {fileID: 420864818}
   m_Layer: 0
   m_Name: Turret
   m_TagString: Untagged
@@ -660,27 +684,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 396608842}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!65 &420864818
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 420864816}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &420864819
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -908,7 +911,6 @@ GameObject:
   - component: {fileID: 822174170}
   - component: {fileID: 822174173}
   - component: {fileID: 822174172}
-  - component: {fileID: 822174171}
   m_Layer: 0
   m_Name: Hull
   m_TagString: Untagged
@@ -931,27 +933,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 396608842}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!65 &822174171
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 822174169}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &822174172
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1814,9 +1795,10 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 128
     terrainPenalty: 0
+  blurRadius: 5
   gridWorldSize: {x: 41, y: 41}
   nodeRadius: 0.5
-  enableGridGizmos: 1
+  enableGridGizmos: 0
   playerVehicle: {fileID: 396608842}
   moveMarker: {fileID: 8094985680336349133}
 --- !u!4 &1784640308
