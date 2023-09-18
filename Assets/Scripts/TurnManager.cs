@@ -25,6 +25,8 @@ namespace TankGame
 
         private Projector playerRangeProjector;
 
+        public LineRenderer playerAimLine;
+
         [HideInInspector]
         public ETurnPhase turnPhase;
 
@@ -39,6 +41,7 @@ namespace TankGame
 
             playerRangeProjector = playerVehicle.transform.GetComponentInChildren<Projector>();
             playerRangeProjector.enabled = false;
+            playerAimLine.enabled = false;
 
             moveButton.gameObject.SetActive(false);
 
@@ -58,6 +61,7 @@ namespace TankGame
         {
             turnPhase = ETurnPhase.Shoot;
 
+            playerAimLine.enabled = true;
         }
 
         public void ClickMove()

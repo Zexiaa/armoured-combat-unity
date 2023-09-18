@@ -20,6 +20,9 @@ namespace TankGame
         private float vehicleMoveRange;
 
         [Header("Shooting")]
+        //[SerializeField]
+        //private LineRenderer playerAimLine;
+
         private bool isHoldingRightMouse = false;
         private GameObject playerTurret;
         private float turretRotSpeed;
@@ -89,7 +92,7 @@ namespace TankGame
             switch (TurnManager.Instance.turnPhase)
             {
                 case ETurnPhase.Shoot:
-                    StartCoroutine(LookTowardsMouse(playerTurret, turretRotSpeed));
+                    StartCoroutine(AimTowardsMouse(playerTurret, turretRotSpeed));
                     return;
 
                 default:
@@ -122,7 +125,7 @@ namespace TankGame
             }
         }
 
-        private IEnumerator LookTowardsMouse(GameObject obj, float speed)
+        private IEnumerator AimTowardsMouse(GameObject obj, float speed)
         {
             while (isHoldingRightMouse)
             {
@@ -132,14 +135,21 @@ namespace TankGame
                 if (Physics.Raycast(ray, out hit, 100))
                 {
                     Vector3 targetDirection = hit.point - obj.transform.position;
-
                     Vector3 newDirection = Vector3.RotateTowards(obj.transform.forward, targetDirection, speed * Time.deltaTime, 0.0f);
+
+                    DrawLine(obj.transform.position + newDirection.normalized * 100,
+                        obj.transform.position, TurnManager.Instance.playerAimLine);
 
                     obj.transform.rotation = Quaternion.LookRotation(new Vector3(newDirection.x, 0, newDirection.z));
                 }
 
                 yield return null;
             }
+        }
+
+        private void DrawLine(Vector3 pos1, Vector3 pos2, LineRenderer line)
+        {
+            line.SetPositions(new Vector3[2] { pos1, pos2 });
         }
     }
 }
