@@ -6,10 +6,15 @@ namespace TankGame
     {
         public static PlayerMovement Instance { get; private set; }
 
+        [Header("Movement")]
         public float maxMoveRange = 10.0f; 
 
         [SerializeField]
         private GameObject moveMarker;
+
+        [Header("Turret")]
+        public GameObject vehicleTurret;
+        public float turretRotSpeed = 2.0f;
 
         void Awake()
         {

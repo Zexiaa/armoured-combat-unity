@@ -19,6 +19,11 @@ namespace TankGame
         private GameObject playerVehicle; 
         private float vehicleMoveRange;
 
+        [Header("Shooting")]
+        private bool isHoldingRightMouse = false;
+        private GameObject playerTurret;
+        private float turretRotSpeed;
+
         void Start()
         {
             actions = new Controls();
@@ -27,6 +32,17 @@ namespace TankGame
             actions.gameplay.leftClick.performed += context =>
             {
                 PerformLeftClick();
+            };
+
+            actions.gameplay.rightHold.performed += context =>
+            {
+                isHoldingRightMouse = true;
+                PerformRightHold();
+            };
+
+            actions.gameplay.rightHold.canceled += context =>
+            {
+                isHoldingRightMouse = false;
             };
 
             actions.gameplay.cursorPos.performed += context =>
@@ -38,6 +54,9 @@ namespace TankGame
 
             playerVehicle = PlayerMovement.Instance.gameObject;
             vehicleMoveRange = PlayerMovement.Instance.maxMoveRange;
+
+            playerTurret = PlayerMovement.Instance.vehicleTurret;
+            turretRotSpeed = PlayerMovement.Instance.turretRotSpeed;
         }
 
         void Update()
@@ -57,6 +76,22 @@ namespace TankGame
                     SetMoveMarker();
                     return;
 
+                case ETurnPhase.Shoot:
+                    return;
+
+                default:
+                    return;
+            }
+        }
+
+        private void PerformRightHold()
+        {
+            switch (TurnManager.Instance.turnPhase)
+            {
+                case ETurnPhase.Shoot:
+                    StartCoroutine(LookTowardsMouse(playerTurret, turretRotSpeed));
+                    return;
+
                 default:
                     return;
             }
@@ -67,11 +102,11 @@ namespace TankGame
         /// </summary>
         private void SetMoveMarker()
         {
-            Ray ray = Camera.main.ScreenPointToRay(cursorPos);
-            RaycastHit hit;
-
             if (isCursorOverUI)
                 return;
+
+            Ray ray = Camera.main.ScreenPointToRay(cursorPos);
+            RaycastHit hit;
 
             if (Physics.Raycast(ray, out hit, 100))
             {
@@ -84,6 +119,26 @@ namespace TankGame
                 }
                 else
                     Debug.Log($"Click point too far ({dist} > {vehicleMoveRange})!");
+            }
+        }
+
+        private IEnumerator LookTowardsMouse(GameObject obj, float speed)
+        {
+            while (isHoldingRightMouse)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(cursorPos);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit, 100))
+                {
+                    Vector3 targetDirection = hit.point - obj.transform.position;
+
+                    Vector3 newDirection = Vector3.RotateTowards(obj.transform.forward, targetDirection, speed * Time.deltaTime, 0.0f);
+
+                    obj.transform.rotation = Quaternion.LookRotation(new Vector3(newDirection.x, 0, newDirection.z));
+                }
+
+                yield return null;
             }
         }
     }

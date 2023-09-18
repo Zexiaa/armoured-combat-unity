@@ -31,6 +31,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "rightHold",
+                    "type": "Button",
+                    "id": "4ea1b30d-2e46-4348-b4e0-c65d4bb235fc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -64,6 +73,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "rightClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "caa4f150-ffef-4102-8b41-3a0de91ebaf0",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Hold(duration=0.2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "rightHold",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

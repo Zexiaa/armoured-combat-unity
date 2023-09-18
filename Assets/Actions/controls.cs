@@ -53,6 +53,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""rightHold"",
+                    ""type"": ""Button"",
+                    ""id"": ""4ea1b30d-2e46-4348-b4e0-c65d4bb235fc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -88,6 +97,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""rightClick"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""caa4f150-ffef-4102-8b41-3a0de91ebaf0"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": ""Hold(duration=0.2)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""rightHold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -99,6 +119,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_gameplay_leftClick = m_gameplay.FindAction("leftClick", throwIfNotFound: true);
         m_gameplay_cursorPos = m_gameplay.FindAction("cursorPos", throwIfNotFound: true);
         m_gameplay_rightClick = m_gameplay.FindAction("rightClick", throwIfNotFound: true);
+        m_gameplay_rightHold = m_gameplay.FindAction("rightHold", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -163,6 +184,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_leftClick;
     private readonly InputAction m_gameplay_cursorPos;
     private readonly InputAction m_gameplay_rightClick;
+    private readonly InputAction m_gameplay_rightHold;
     public struct GameplayActions
     {
         private @Controls m_Wrapper;
@@ -170,6 +192,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @leftClick => m_Wrapper.m_gameplay_leftClick;
         public InputAction @cursorPos => m_Wrapper.m_gameplay_cursorPos;
         public InputAction @rightClick => m_Wrapper.m_gameplay_rightClick;
+        public InputAction @rightHold => m_Wrapper.m_gameplay_rightHold;
         public InputActionMap Get() { return m_Wrapper.m_gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -188,6 +211,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @rightClick.started += instance.OnRightClick;
             @rightClick.performed += instance.OnRightClick;
             @rightClick.canceled += instance.OnRightClick;
+            @rightHold.started += instance.OnRightHold;
+            @rightHold.performed += instance.OnRightHold;
+            @rightHold.canceled += instance.OnRightHold;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -201,6 +227,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @rightClick.started -= instance.OnRightClick;
             @rightClick.performed -= instance.OnRightClick;
             @rightClick.canceled -= instance.OnRightClick;
+            @rightHold.started -= instance.OnRightHold;
+            @rightHold.performed -= instance.OnRightHold;
+            @rightHold.canceled -= instance.OnRightHold;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -223,5 +252,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnLeftClick(InputAction.CallbackContext context);
         void OnCursorPos(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
+        void OnRightHold(InputAction.CallbackContext context);
     }
 }

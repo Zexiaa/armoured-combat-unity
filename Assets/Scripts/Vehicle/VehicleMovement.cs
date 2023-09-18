@@ -99,7 +99,7 @@ namespace TankGame
 
         protected virtual void OnReachedDestination()
         {
-            Debug.Log("Arrived at destination.");
+            //Debug.Log("Arrived at destination.");
         }
     }
 }
