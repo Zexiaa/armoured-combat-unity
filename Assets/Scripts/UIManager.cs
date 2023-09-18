@@ -6,12 +6,14 @@ namespace TankGame
 {
     public class UIManager : MonoBehaviour
     {
-        public delegate void MovePlayerAction();
-        public static event MovePlayerAction OnMovePlayer;
+        //public delegate void MovePlayerAction();
+        //public static event MovePlayerAction OnMovePlayer;
 
-        public void ClickMove()
-        {
-            OnMovePlayer();
-        }
+        //private bool hasPlayerMoved = false;
+
+        //public void ClickMove()
+        //{
+        //    OnMovePlayer();
+        //}
     }
 }

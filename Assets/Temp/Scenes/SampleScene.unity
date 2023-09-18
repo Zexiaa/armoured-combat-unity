@@ -767,7 +767,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ff31609a9c2f3c4f9ab4146a88f3b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerVehicle: {fileID: 396608841}
   moveMarker: {fileID: 8094985680336349133}
 --- !u!114 &620449673
 MonoBehaviour:
@@ -781,6 +780,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a44c35f84ea36f3469bfb958a2afad27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveButton: {fileID: 1413168554}
   turnPhase: 1
 --- !u!4 &620449674
 Transform:
@@ -1494,8 +1494,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 620449675}
-        m_TargetAssemblyTypeName: TankGame.UIManager, Assembly-CSharp
+      - m_Target: {fileID: 620449673}
+        m_TargetAssemblyTypeName: TankGame.TurnManager, Assembly-CSharp
         m_MethodName: ClickMove
         m_Mode: 1
         m_Arguments:

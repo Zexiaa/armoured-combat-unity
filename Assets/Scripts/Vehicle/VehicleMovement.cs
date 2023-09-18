@@ -68,7 +68,7 @@ namespace TankGame
                     if (pathIndex == path.finishLineIndex)
                     {
                         isFollowingPath = false;
-                        yield break;
+                        break;
                     }
                     
                     pathIndex++;
@@ -93,6 +93,13 @@ namespace TankGame
                 
                 yield return null;
             }
+
+            OnReachedDestination();
+        }
+
+        protected virtual void OnReachedDestination()
+        {
+            Debug.Log("Arrived at destination.");
         }
     }
 }

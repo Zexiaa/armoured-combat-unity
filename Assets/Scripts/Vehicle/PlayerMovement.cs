@@ -1,30 +1,36 @@
-using TankGame.NavigationSystem;
 using UnityEngine;
 
 namespace TankGame
 {
     public class PlayerMovement : VehicleMovement
     {
+        public static PlayerMovement Instance { get; private set; }
+
         public float maxMoveRange = 10.0f; 
 
         [SerializeField]
         private GameObject moveMarker;
 
+        void Awake()
+        {
+            if (Instance == null)
+                Instance = this;
+        }
+
         void Start()
         {
-            maxMoveRange *= NavigationGrid.Instance.NodeDiameter; // 1 Grid node diameter is 1m
+            maxMoveRange *= NavigationSystem.NavigationGrid.Instance.NodeDiameter; // 1 Grid node diameter is 1m
             transform.GetComponentInChildren<Projector>().orthographicSize = maxMoveRange;
-            //transform.GetComponentInChildren<Projector>().enabled = false;
         }
 
         void OnEnable()
         {
-            UIManager.OnMovePlayer += MovePlayerVehicle;
+            TurnManager.OnMovePlayer += MovePlayerVehicle;
         }
 
         void OnDisable()
         {
-            UIManager.OnMovePlayer -= MovePlayerVehicle;
+            TurnManager.OnMovePlayer -= MovePlayerVehicle;
         }
 
         /* 
@@ -35,6 +41,13 @@ namespace TankGame
         {
             //TODO check for movement marker 
             NavigationSystem.NavigationManager.CalculatePath(transform.position, moveMarker.transform.position, OnPathFound);
+        }
+
+        protected override void OnReachedDestination()
+        {
+            base.OnReachedDestination();
+
+            TurnManager.Instance.SwitchToShootPhase();
         }
     }
 }

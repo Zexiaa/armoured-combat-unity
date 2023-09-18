@@ -12,13 +12,11 @@ namespace TankGame
         private Vector2 cursorPos;
         private bool isCursorOverUI;
 
-        [SerializeField]
-        private GameObject playerVehicle;
-
         [Header("Movement")]
         [SerializeField]
         private GameObject moveMarker;
 
+        private GameObject playerVehicle; 
         private float vehicleMoveRange;
 
         void Start()
@@ -38,7 +36,8 @@ namespace TankGame
 
             moveMarker.SetActive(false);
 
-            vehicleMoveRange = playerVehicle.GetComponent<PlayerMovement>().maxMoveRange;
+            playerVehicle = PlayerMovement.Instance.gameObject;
+            vehicleMoveRange = PlayerMovement.Instance.maxMoveRange;
         }
 
         void Update()
@@ -49,7 +48,6 @@ namespace TankGame
         /* 
          * PRIVATE METHODS 
          */
-
 
         private void PerformLeftClick()
         {

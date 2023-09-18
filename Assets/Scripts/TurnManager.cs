@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace TankGame
 {
@@ -16,6 +15,16 @@ namespace TankGame
     {
         public static TurnManager Instance { get; private set; }
 
+        public delegate void MovePlayerAction();
+        public static event MovePlayerAction OnMovePlayer;
+
+        [SerializeField]
+        private Button moveButton;
+        
+        private GameObject playerVehicle;
+
+        private Projector playerRangeProjector;
+
         [HideInInspector]
         public ETurnPhase turnPhase;
 
@@ -25,23 +34,38 @@ namespace TankGame
             {
                 Instance = this;
             }
-            
+
+            playerVehicle = PlayerMovement.Instance.gameObject;
+
+            playerRangeProjector = playerVehicle.transform.GetComponentInChildren<Projector>();
+            playerRangeProjector.enabled = false;
+
+            moveButton.gameObject.SetActive(false);
+
+            SwitchToMovePhase();
+        }
+
+        public void SwitchToMovePhase()
+        {
             turnPhase = ETurnPhase.Move;
+
+            moveButton.gameObject.SetActive(true);
+
+            playerRangeProjector.enabled = true;
         }
 
-        void Update()
+        public void SwitchToShootPhase()
         {
-        
+            turnPhase = ETurnPhase.Shoot;
+
         }
 
-        void OnEnable()
+        public void ClickMove()
         {
-            UIManager.OnMovePlayer += SwitchToShootPhase;
-        }
+            OnMovePlayer();
 
-        void OnDisable()
-        {
-            UIManager.OnMovePlayer -= SwitchToShootPhase;
+            moveButton.gameObject.SetActive(false);
+            playerRangeProjector.enabled = false;
         }
 
         /* 
@@ -50,11 +74,6 @@ namespace TankGame
         private void SwitchTurns()
         {
             // Cycle through player and enemies
-        }
-
-        private void SwitchToShootPhase()
-        {
-            //turnPhase = ETurnPhase.Shoot;
         }
     }
 }
