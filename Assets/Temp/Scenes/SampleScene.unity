@@ -611,6 +611,7 @@ Transform:
   m_Children:
   - {fileID: 822174170}
   - {fileID: 420864817}
+  - {fileID: 1700918815}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &396608843
@@ -629,6 +630,7 @@ MonoBehaviour:
   turnDistance: 1
   turnSpeed: 6
   stopDistance: 2
+  maxMoveRange: 10
   moveMarker: {fileID: 8094985680336349133}
 --- !u!65 &396608844
 BoxCollider:
@@ -765,6 +767,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ff31609a9c2f3c4f9ab4146a88f3b8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerVehicle: {fileID: 396608841}
   moveMarker: {fileID: 8094985680336349133}
 --- !u!114 &620449673
 MonoBehaviour:
@@ -1646,6 +1649,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 137728775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1700918814
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1700918815}
+  - component: {fileID: 1700918816}
+  m_Layer: 0
+  m_Name: Projector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1700918815
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700918814}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.70710576, y: -0, z: -0, w: 0.70710784}
+  m_LocalPosition: {x: 0, y: 1.231, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 396608842}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!119 &1700918816
+Projector:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700918814}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_NearClipPlane: 0.101
+  m_FarClipPlane: 5
+  m_FieldOfView: 98.9
+  m_AspectRatio: 1
+  m_Orthographic: 1
+  m_OrthographicSize: 8.3
+  m_Material: {fileID: 2100000, guid: aa7b2af1ad3a38a49a7bb3fa3078a98a, type: 2}
+  m_IgnoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!1 &1723657696
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,14 @@ using UnityEngine;
 
 namespace TankGame
 {
+    public enum ETurnPhase
+    {
+        Spot,
+        Move,
+        Shoot,
+        Ammo
+    }
+
     public class TurnManager : MonoBehaviour
     {
         public static TurnManager Instance { get; private set; }

@@ -93,7 +93,7 @@ namespace TankGame.NavigationSystem
                 }
             }
 
-            yield return null;
+            yield return null; // Wait one frame
 
             // Get the shortest path waypoints
             if (pathSuccess)

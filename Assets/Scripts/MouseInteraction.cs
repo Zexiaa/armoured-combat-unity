@@ -1,7 +1,5 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using TankGame.NavigationSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -15,7 +13,13 @@ namespace TankGame
         private bool isCursorOverUI;
 
         [SerializeField]
+        private GameObject playerVehicle;
+
+        [Header("Movement")]
+        [SerializeField]
         private GameObject moveMarker;
+
+        private float vehicleMoveRange;
 
         void Start()
         {
@@ -33,6 +37,8 @@ namespace TankGame
             };
 
             moveMarker.SetActive(false);
+
+            vehicleMoveRange = playerVehicle.GetComponent<PlayerMovement>().maxMoveRange;
         }
 
         void Update()
@@ -66,11 +72,20 @@ namespace TankGame
             Ray ray = Camera.main.ScreenPointToRay(cursorPos);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, 100) &&
-                !isCursorOverUI)
+            if (isCursorOverUI)
+                return;
+
+            if (Physics.Raycast(ray, out hit, 100))
             {
-                moveMarker.SetActive(true);
-                moveMarker.transform.position = hit.point;
+                float dist = Vector3.Distance(hit.point, playerVehicle.transform.position) * NavigationGrid.Instance.NodeDiameter;
+                
+                if (dist < vehicleMoveRange)
+                {
+                    moveMarker.SetActive(true);
+                    moveMarker.transform.position = hit.point;
+                }
+                else
+                    Debug.Log($"Click point too far ({dist} > {vehicleMoveRange})!");
             }
         }
     }

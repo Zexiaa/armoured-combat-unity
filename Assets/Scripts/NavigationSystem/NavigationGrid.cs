@@ -12,6 +12,8 @@ namespace TankGame.NavigationSystem
     /// </summary>
     public class NavigationGrid : MonoBehaviour
     {
+        public static NavigationGrid Instance { get; private set; }
+
         [Header("Terrain")]
         [SerializeField] 
         private LayerMask nonWalkableMask;
@@ -39,7 +41,7 @@ namespace TankGame.NavigationSystem
         GridNode[,] grid;
         private int gridSizeX, gridSizeY;
 
-        private float nodeDiameter;
+        //private float nodeDiameter;
 
         [Header("====Debug====")]
         [SerializeField]
@@ -59,21 +61,25 @@ namespace TankGame.NavigationSystem
             get { return gridSizeX * gridSizeY; }
         }
 
+        public float NodeDiameter
+        {
+            get { return nodeRadius * 2; }
+        }
+
         void Awake()
         {
-            nodeDiameter = nodeRadius * 2;
+            if (Instance == null)
+                Instance = this;
 
             // Calculate number of grids for each side
-            gridSizeX = Mathf.FloorToInt(gridWorldSize.x / nodeDiameter);
-            gridSizeY = Mathf.FloorToInt(gridWorldSize.y / nodeDiameter);
+            gridSizeX = Mathf.FloorToInt(gridWorldSize.x / NodeDiameter);
+            gridSizeY = Mathf.FloorToInt(gridWorldSize.y / NodeDiameter);
 
             foreach (TerrainType terrain in terrainModifiers)
             {
                 walkableMask.value |= terrain.terrainMask.value;
                 walkableTerrainDict.Add((int) Mathf.Log(terrain.terrainMask.value, 2), terrain.terrainPenalty);
             }
-
-            
 
             CreateGrid();
         }
@@ -100,7 +106,7 @@ namespace TankGame.NavigationSystem
                 if (n == playerNodePosition) Gizmos.color = Color.green;
                 if (n == moveMarkerNodePosition) Gizmos.color = Color.yellow;
 
-                Gizmos.DrawCube(n.worldPosition, Vector3.one * nodeDiameter);
+                Gizmos.DrawCube(n.worldPosition, Vector3.one * NodeDiameter);
             }
         }
 
@@ -171,8 +177,8 @@ namespace TankGame.NavigationSystem
                 for (int y = 0; y < gridSizeY; y++) {
                     
                     Vector3 nodeWorldPosition = worldBottomLeft +
-                        Vector3.right * (x * nodeDiameter + nodeRadius) +
-                        Vector3.forward * (y * nodeDiameter + nodeRadius);
+                        Vector3.right * (x * NodeDiameter + nodeRadius) +
+                        Vector3.forward * (y * NodeDiameter + nodeRadius);
 
                     bool walkable = !Physics.CheckSphere(nodeWorldPosition, nodeRadius, nonWalkableMask);
 
