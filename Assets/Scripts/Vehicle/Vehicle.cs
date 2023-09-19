@@ -11,6 +11,7 @@ namespace TankGame
         public GameObject vehicleHull;
         public GameObject vehicleTurret;
         public GameObject vehicleGun;
+        public GameObject gunExitPoint;
 
         [SerializeField]
         private Projector moveRangeProjector;
@@ -27,6 +28,13 @@ namespace TankGame
 
         [SerializeField]
         private float turretRotSpeed = 2.0f;
+
+        [SerializeField]
+        private float shellExitForce = 1000.0f;
+
+        /*
+         * GET METHODS
+         */
 
         public GameObject VehicleRoot { get { return gameObject; } }
 
@@ -54,6 +62,10 @@ namespace TankGame
                     vehicleGun.transform.position + vehicleGun.transform.forward * maxAimLineDistance});
         }
 
+        /*
+         * CLASS METHODS
+         */
+
         public void ResetEnabledStatus()
         {
             SetMoveRangeActive(false);
@@ -76,6 +88,15 @@ namespace TankGame
             {
                 gunAimLine.enabled = isEnabled;
             }
+        }
+
+        public void FireGun(GameObject shell)
+        {
+            shell.SetActive(true);
+
+            shell.transform.SetPositionAndRotation(gunExitPoint.transform.position, Quaternion.LookRotation(vehicleGun.transform.forward, -shell.transform.forward));
+
+            shell.GetComponent<Rigidbody>().AddForce(vehicleGun.transform.forward * shellExitForce, ForceMode.Force);
         }
     }
 }

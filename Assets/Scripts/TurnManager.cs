@@ -28,13 +28,13 @@ namespace TankGame
 
         [SerializeField]
         private Button moveButton;
+
+        [SerializeField]
+        private Button fireButton;
+
+        [SerializeField]
+        private GameObject tankShell;
         
-        //private GameObject playerVehicle;
-
-        //private Projector playerRangeProjector;
-
-        //public LineRenderer playerAimLine;
-
         [HideInInspector]
         public ETurnPhase turnPhase;
 
@@ -46,6 +46,9 @@ namespace TankGame
             }
 
             moveButton.gameObject.SetActive(false);
+            fireButton.gameObject.SetActive(false);
+
+            tankShell.SetActive(false);
 
             NextVehicleTurn();
         }
@@ -64,6 +67,8 @@ namespace TankGame
             turnPhase = ETurnPhase.Shoot;
 
             currentVehicle.SetGunAimLineActive(true);
+
+            fireButton.gameObject.SetActive(true);
         }
 
         public void ClickMove()
@@ -74,6 +79,12 @@ namespace TankGame
 
             //TODO allow players to use up full move range
             currentVehicle.SetMoveRangeActive(false);
+        }
+
+        public void ClickFire()
+        {
+            tankShell.GetComponent<ShellPhysics>().SetFirer(currentVehicle.gameObject);
+            currentVehicle.FireGun(tankShell);
         }
 
         /* 
