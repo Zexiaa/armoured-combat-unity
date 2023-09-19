@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "scrollDown",
+                    "type": "Value",
+                    "id": "1b1c2047-ced4-44c9-aece-2fda687c4652",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -84,6 +93,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "rightHold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "041d56e3-8f8b-4c5a-94aa-5bd49802a9f1",
+                    "path": "<Mouse>/scroll/down",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "scrollDown",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

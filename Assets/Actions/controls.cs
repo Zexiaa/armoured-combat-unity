@@ -62,6 +62,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""scrollDown"",
+                    ""type"": ""Value"",
+                    ""id"": ""1b1c2047-ced4-44c9-aece-2fda687c4652"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -108,6 +117,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""rightHold"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""041d56e3-8f8b-4c5a-94aa-5bd49802a9f1"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""scrollDown"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -120,6 +140,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_gameplay_cursorPos = m_gameplay.FindAction("cursorPos", throwIfNotFound: true);
         m_gameplay_rightClick = m_gameplay.FindAction("rightClick", throwIfNotFound: true);
         m_gameplay_rightHold = m_gameplay.FindAction("rightHold", throwIfNotFound: true);
+        m_gameplay_scrollDown = m_gameplay.FindAction("scrollDown", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -185,6 +206,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_cursorPos;
     private readonly InputAction m_gameplay_rightClick;
     private readonly InputAction m_gameplay_rightHold;
+    private readonly InputAction m_gameplay_scrollDown;
     public struct GameplayActions
     {
         private @Controls m_Wrapper;
@@ -193,6 +215,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @cursorPos => m_Wrapper.m_gameplay_cursorPos;
         public InputAction @rightClick => m_Wrapper.m_gameplay_rightClick;
         public InputAction @rightHold => m_Wrapper.m_gameplay_rightHold;
+        public InputAction @scrollDown => m_Wrapper.m_gameplay_scrollDown;
         public InputActionMap Get() { return m_Wrapper.m_gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -214,6 +237,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @rightHold.started += instance.OnRightHold;
             @rightHold.performed += instance.OnRightHold;
             @rightHold.canceled += instance.OnRightHold;
+            @scrollDown.started += instance.OnScrollDown;
+            @scrollDown.performed += instance.OnScrollDown;
+            @scrollDown.canceled += instance.OnScrollDown;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -230,6 +256,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @rightHold.started -= instance.OnRightHold;
             @rightHold.performed -= instance.OnRightHold;
             @rightHold.canceled -= instance.OnRightHold;
+            @scrollDown.started -= instance.OnScrollDown;
+            @scrollDown.performed -= instance.OnScrollDown;
+            @scrollDown.canceled -= instance.OnScrollDown;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -253,5 +282,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnCursorPos(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
         void OnRightHold(InputAction.CallbackContext context);
+        void OnScrollDown(InputAction.CallbackContext context);
     }
 }

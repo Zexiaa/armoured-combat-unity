@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,13 +20,20 @@ namespace TankGame
         public static event MovePlayerAction OnMovePlayer;
 
         [SerializeField]
+        private List<Vehicle> vehiclesTurnOrder;
+        private int turnCount = -1;
+
+        [HideInInspector]
+        public Vehicle currentVehicle;
+
+        [SerializeField]
         private Button moveButton;
         
-        private GameObject playerVehicle;
+        //private GameObject playerVehicle;
 
-        private Projector playerRangeProjector;
+        //private Projector playerRangeProjector;
 
-        public LineRenderer playerAimLine;
+        //public LineRenderer playerAimLine;
 
         [HideInInspector]
         public ETurnPhase turnPhase;
@@ -37,31 +45,25 @@ namespace TankGame
                 Instance = this;
             }
 
-            playerVehicle = PlayerMovement.Instance.gameObject;
-
-            playerRangeProjector = playerVehicle.transform.GetComponentInChildren<Projector>();
-            playerRangeProjector.enabled = false;
-            playerAimLine.enabled = false;
-
             moveButton.gameObject.SetActive(false);
 
-            SwitchToMovePhase();
+            NextVehicleTurn();
         }
 
         public void SwitchToMovePhase()
         {
             turnPhase = ETurnPhase.Move;
 
-            moveButton.gameObject.SetActive(true);
+            currentVehicle.SetMoveRangeActive(true);
 
-            playerRangeProjector.enabled = true;
+            moveButton.gameObject.SetActive(true);
         }
 
         public void SwitchToShootPhase()
         {
             turnPhase = ETurnPhase.Shoot;
 
-            playerAimLine.enabled = true;
+            currentVehicle.SetGunAimLineActive(true);
         }
 
         public void ClickMove()
@@ -69,15 +71,20 @@ namespace TankGame
             OnMovePlayer();
 
             moveButton.gameObject.SetActive(false);
-            playerRangeProjector.enabled = false;
+
+            //TODO allow players to use up full move range
+            currentVehicle.SetMoveRangeActive(false);
         }
 
         /* 
          * PRIVATE METHODS 
          */
-        private void SwitchTurns()
+        private void NextVehicleTurn()
         {
-            // Cycle through player and enemies
+            turnCount++;
+
+            currentVehicle = vehiclesTurnOrder[turnCount];
+            SwitchToMovePhase();
         }
     }
 }

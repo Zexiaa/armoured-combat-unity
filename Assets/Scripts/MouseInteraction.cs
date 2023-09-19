@@ -16,16 +16,7 @@ namespace TankGame
         [SerializeField]
         private GameObject moveMarker;
 
-        private GameObject playerVehicle; 
-        private float vehicleMoveRange;
-
-        [Header("Shooting")]
-        //[SerializeField]
-        //private LineRenderer playerAimLine;
-
         private bool isHoldingRightMouse = false;
-        private GameObject playerTurret;
-        private float turretRotSpeed;
 
         void Start()
         {
@@ -54,12 +45,6 @@ namespace TankGame
             };
 
             moveMarker.SetActive(false);
-
-            playerVehicle = PlayerMovement.Instance.gameObject;
-            vehicleMoveRange = PlayerMovement.Instance.maxMoveRange;
-
-            playerTurret = PlayerMovement.Instance.vehicleTurret;
-            turretRotSpeed = PlayerMovement.Instance.turretRotSpeed;
         }
 
         void Update()
@@ -92,7 +77,9 @@ namespace TankGame
             switch (TurnManager.Instance.turnPhase)
             {
                 case ETurnPhase.Shoot:
-                    StartCoroutine(AimTowardsMouse(playerTurret, turretRotSpeed));
+                    Vehicle currentVehicle = TurnManager.Instance.currentVehicle;
+
+                    StartCoroutine(AimObjectTowardsCursor(currentVehicle.vehicleTurret, currentVehicle.TurretSpeed));
                     return;
 
                 default:
@@ -113,19 +100,20 @@ namespace TankGame
 
             if (Physics.Raycast(ray, out hit, 100))
             {
-                float dist = Vector3.Distance(hit.point, playerVehicle.transform.position) * NavigationGrid.Instance.NodeDiameter;
-                
-                if (dist < vehicleMoveRange)
+                float dist = Vector3.Distance(hit.point, TurnManager.Instance.currentVehicle.Position) * NavigationGrid.Instance.NodeDiameter;
+                float maxDist = TurnManager.Instance.currentVehicle.MaxMoveDistance;
+
+                if (dist < maxDist)
                 {
                     moveMarker.SetActive(true);
                     moveMarker.transform.position = hit.point;
                 }
                 else
-                    Debug.Log($"Click point too far ({dist} > {vehicleMoveRange})!");
+                    Debug.Log($"Click point too far ({dist} > {maxDist})!");
             }
         }
 
-        private IEnumerator AimTowardsMouse(GameObject obj, float speed)
+        private IEnumerator AimObjectTowardsCursor(GameObject obj, float speed)
         {
             while (isHoldingRightMouse)
             {
@@ -137,19 +125,11 @@ namespace TankGame
                     Vector3 targetDirection = hit.point - obj.transform.position;
                     Vector3 newDirection = Vector3.RotateTowards(obj.transform.forward, targetDirection, speed * Time.deltaTime, 0.0f);
 
-                    DrawLine(obj.transform.position + newDirection.normalized * 100,
-                        obj.transform.position, TurnManager.Instance.playerAimLine);
-
                     obj.transform.rotation = Quaternion.LookRotation(new Vector3(newDirection.x, 0, newDirection.z));
                 }
 
                 yield return null;
             }
-        }
-
-        private void DrawLine(Vector3 pos1, Vector3 pos2, LineRenderer line)
-        {
-            line.SetPositions(new Vector3[2] { pos1, pos2 });
         }
     }
 }
