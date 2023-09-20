@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TankGame
@@ -19,6 +20,12 @@ namespace TankGame
         [SerializeField]
         private LineRenderer gunAimLine;
 
+        [SerializeField]
+        private float rangingStep = 100.0f;
+
+        private float ranging = 100.0f;
+        private float elevationAngle = 0.0f;
+
         [Header("Attributes")]
         [SerializeField]
         private float maxMoveDistance = 10.0f;
@@ -31,6 +38,13 @@ namespace TankGame
 
         [SerializeField]
         private float shellExitForce = 1000.0f;
+
+        [Header("Ammunition")]
+        [SerializeField]
+        private List<Shell> shells;
+        private Shell nextShell;
+
+        private Dictionary<Shell.Category, Shell> shellTypes = new Dictionary<Shell.Category, Shell>();
 
         /*
          * GET METHODS
@@ -47,6 +61,15 @@ namespace TankGame
         void Awake()
         {
             ResetEnabledStatus();
+
+            foreach (Shell shell in shells)
+            {
+                shellTypes.Add(shell.shellCategory, shell);
+            }
+
+            shells.Clear();
+
+            ChangeShellType(Shell.Category.AP);
         }
 
         void Start()
@@ -90,13 +113,66 @@ namespace TankGame
             }
         }
 
-        public void FireGun(GameObject shell)
+        public void ChangeShellType(Shell.Category shellCategory)
         {
-            shell.SetActive(true);
+            if (!shellTypes.TryGetValue(shellCategory, out nextShell))
+                Debug.LogWarning("Failed to load next shell of type: " + shellCategory);
+        }
 
-            shell.transform.SetPositionAndRotation(gunExitPoint.transform.position, Quaternion.LookRotation(vehicleGun.transform.forward, -shell.transform.forward));
+        public void FireGun(GameObject shellObj)
+        {
+            //Shell shell;
+            //if (!shellTypes.TryGetValue(shellCategory, out shell))
+            //    return;
 
-            shell.GetComponent<Rigidbody>().AddForce(vehicleGun.transform.forward * shellExitForce, ForceMode.Force);
+            shellObj.SetActive(true);
+
+            shellObj.transform.SetPositionAndRotation(gunExitPoint.transform.position, Quaternion.LookRotation(vehicleGun.transform.forward, -shellObj.transform.forward));
+
+            shellObj.GetComponent<ShellPhysics>().ShootShell(VehicleRoot, ranging, nextShell.muzzleVelocity);
+        }
+
+        public float AdjustRanging(bool isUpwards)
+        {
+            if (isUpwards)
+                ranging += rangingStep;
+            else
+                ranging -= rangingStep;
+
+            SetElevation(nextShell.shellCategory);
+
+            return ranging;
+        }
+
+        /*
+         * PRIVATE METHODS
+         */
+
+        private float SetElevation(Shell.Category shellCategory)
+        {
+            Shell shell;
+
+            if (shellTypes.TryGetValue(shellCategory, out shell))
+            {
+                elevationAngle = RangeToElevation(ranging, shell.muzzleVelocity);
+
+                vehicleGun.transform.rotation = Quaternion.Euler(elevationAngle, 0, 0);
+            }
+
+            return ranging;
+        }
+
+        private float RangeToElevation(float range, float muzzleVelocity)
+        {
+            // 2 * Theta = arcsin((R * g) / (u * u))
+
+            float elevation = Mathf.Asin(
+                (range * ShellPhysics.GravitationalAcceleration) / (muzzleVelocity * muzzleVelocity)
+                );
+
+            elevation *= 180f / Mathf.PI;
+
+            return elevation / 2;
         }
     }
 }

@@ -44,6 +44,16 @@ namespace TankGame
                 cursorPos = context.ReadValue<Vector2>();
             };
 
+            actions.gameplay.addButton.performed += context =>
+            {
+                PerformDecreaseAction();
+            };
+            
+            actions.gameplay.subtractButton.performed += context =>
+            {
+                PerformIncreaseAction();
+            };
+
             moveMarker.SetActive(false);
         }
 
@@ -85,6 +95,20 @@ namespace TankGame
                 default:
                     return;
             }
+        }
+
+        private void PerformDecreaseAction()
+        {
+            //TODO set ranging in UI
+
+            TurnManager.Instance.currentVehicle.AdjustRanging(isUpwards: false);
+        }
+
+        private void PerformIncreaseAction()
+        {
+            //TODO set ranging in UI
+
+            TurnManager.Instance.currentVehicle.AdjustRanging(isUpwards: true);
         }
 
         /// <summary>

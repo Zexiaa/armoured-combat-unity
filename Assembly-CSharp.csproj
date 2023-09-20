@@ -101,6 +101,7 @@
     <Compile Include="Assets\Scripts\NavigationSystem\TerrainType.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\ShaderPropAnimator.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
+    <Compile Include="Assets\Scripts\Shell.cs" />
     <Compile Include="Assets\Scripts\Vehicle\VehicleMovement.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\Scripts\NavigationSystem\NavigationManager.cs" />

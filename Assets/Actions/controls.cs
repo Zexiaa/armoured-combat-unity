@@ -64,13 +64,31 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""scrollDown"",
+                    ""name"": ""scrollValue"",
                     ""type"": ""Value"",
                     ""id"": ""1b1c2047-ced4-44c9-aece-2fda687c4652"",
-                    ""expectedControlType"": ""Axis"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""addButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""a1460cd7-33df-42cb-aa00-3ed3d1458694"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""subtractButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""2941d047-a87e-4b29-8b35-75abef3277b5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -121,11 +139,33 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""041d56e3-8f8b-4c5a-94aa-5bd49802a9f1"",
-                    ""path"": ""<Mouse>/scroll/down"",
+                    ""path"": ""<Mouse>/scroll"",
                     ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""scrollDown"",
+                    ""action"": ""scrollValue"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f891f847-8a82-4d91-915f-3371d6abfca3"",
+                    ""path"": ""<Keyboard>/equals"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""addButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0d009207-93ca-4f2b-aa15-1a4b864218b3"",
+                    ""path"": ""<Keyboard>/minus"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""subtractButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -140,7 +180,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_gameplay_cursorPos = m_gameplay.FindAction("cursorPos", throwIfNotFound: true);
         m_gameplay_rightClick = m_gameplay.FindAction("rightClick", throwIfNotFound: true);
         m_gameplay_rightHold = m_gameplay.FindAction("rightHold", throwIfNotFound: true);
-        m_gameplay_scrollDown = m_gameplay.FindAction("scrollDown", throwIfNotFound: true);
+        m_gameplay_scrollValue = m_gameplay.FindAction("scrollValue", throwIfNotFound: true);
+        m_gameplay_addButton = m_gameplay.FindAction("addButton", throwIfNotFound: true);
+        m_gameplay_subtractButton = m_gameplay.FindAction("subtractButton", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -206,7 +248,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_cursorPos;
     private readonly InputAction m_gameplay_rightClick;
     private readonly InputAction m_gameplay_rightHold;
-    private readonly InputAction m_gameplay_scrollDown;
+    private readonly InputAction m_gameplay_scrollValue;
+    private readonly InputAction m_gameplay_addButton;
+    private readonly InputAction m_gameplay_subtractButton;
     public struct GameplayActions
     {
         private @Controls m_Wrapper;
@@ -215,7 +259,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @cursorPos => m_Wrapper.m_gameplay_cursorPos;
         public InputAction @rightClick => m_Wrapper.m_gameplay_rightClick;
         public InputAction @rightHold => m_Wrapper.m_gameplay_rightHold;
-        public InputAction @scrollDown => m_Wrapper.m_gameplay_scrollDown;
+        public InputAction @scrollValue => m_Wrapper.m_gameplay_scrollValue;
+        public InputAction @addButton => m_Wrapper.m_gameplay_addButton;
+        public InputAction @subtractButton => m_Wrapper.m_gameplay_subtractButton;
         public InputActionMap Get() { return m_Wrapper.m_gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -237,9 +283,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @rightHold.started += instance.OnRightHold;
             @rightHold.performed += instance.OnRightHold;
             @rightHold.canceled += instance.OnRightHold;
-            @scrollDown.started += instance.OnScrollDown;
-            @scrollDown.performed += instance.OnScrollDown;
-            @scrollDown.canceled += instance.OnScrollDown;
+            @scrollValue.started += instance.OnScrollValue;
+            @scrollValue.performed += instance.OnScrollValue;
+            @scrollValue.canceled += instance.OnScrollValue;
+            @addButton.started += instance.OnAddButton;
+            @addButton.performed += instance.OnAddButton;
+            @addButton.canceled += instance.OnAddButton;
+            @subtractButton.started += instance.OnSubtractButton;
+            @subtractButton.performed += instance.OnSubtractButton;
+            @subtractButton.canceled += instance.OnSubtractButton;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -256,9 +308,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @rightHold.started -= instance.OnRightHold;
             @rightHold.performed -= instance.OnRightHold;
             @rightHold.canceled -= instance.OnRightHold;
-            @scrollDown.started -= instance.OnScrollDown;
-            @scrollDown.performed -= instance.OnScrollDown;
-            @scrollDown.canceled -= instance.OnScrollDown;
+            @scrollValue.started -= instance.OnScrollValue;
+            @scrollValue.performed -= instance.OnScrollValue;
+            @scrollValue.canceled -= instance.OnScrollValue;
+            @addButton.started -= instance.OnAddButton;
+            @addButton.performed -= instance.OnAddButton;
+            @addButton.canceled -= instance.OnAddButton;
+            @subtractButton.started -= instance.OnSubtractButton;
+            @subtractButton.performed -= instance.OnSubtractButton;
+            @subtractButton.canceled -= instance.OnSubtractButton;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -282,6 +340,8 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnCursorPos(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
         void OnRightHold(InputAction.CallbackContext context);
-        void OnScrollDown(InputAction.CallbackContext context);
+        void OnScrollValue(InputAction.CallbackContext context);
+        void OnAddButton(InputAction.CallbackContext context);
+        void OnSubtractButton(InputAction.CallbackContext context);
     }
 }

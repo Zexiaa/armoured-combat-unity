@@ -71,6 +71,10 @@ namespace TankGame
             fireButton.gameObject.SetActive(true);
         }
 
+        /*
+         * BUTTON METHODS
+         */
+
         public void ClickMove()
         {
             OnMovePlayer();
@@ -83,7 +87,6 @@ namespace TankGame
 
         public void ClickFire()
         {
-            tankShell.GetComponent<ShellPhysics>().SetFirer(currentVehicle.gameObject);
             currentVehicle.FireGun(tankShell);
         }
 
