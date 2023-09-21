@@ -89,6 +89,15 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""rKey"",
+                    ""type"": ""Button"",
+                    ""id"": ""a9196fe7-22d6-4f81-9d7d-e060a8a3344b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -168,6 +177,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""action"": ""subtractButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a1dc8e29-016e-4f8d-932a-3e86c8e1321c"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""rKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -183,6 +203,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_gameplay_scrollValue = m_gameplay.FindAction("scrollValue", throwIfNotFound: true);
         m_gameplay_addButton = m_gameplay.FindAction("addButton", throwIfNotFound: true);
         m_gameplay_subtractButton = m_gameplay.FindAction("subtractButton", throwIfNotFound: true);
+        m_gameplay_rKey = m_gameplay.FindAction("rKey", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -251,6 +272,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_gameplay_scrollValue;
     private readonly InputAction m_gameplay_addButton;
     private readonly InputAction m_gameplay_subtractButton;
+    private readonly InputAction m_gameplay_rKey;
     public struct GameplayActions
     {
         private @Controls m_Wrapper;
@@ -262,6 +284,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         public InputAction @scrollValue => m_Wrapper.m_gameplay_scrollValue;
         public InputAction @addButton => m_Wrapper.m_gameplay_addButton;
         public InputAction @subtractButton => m_Wrapper.m_gameplay_subtractButton;
+        public InputAction @rKey => m_Wrapper.m_gameplay_rKey;
         public InputActionMap Get() { return m_Wrapper.m_gameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -292,6 +315,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @subtractButton.started += instance.OnSubtractButton;
             @subtractButton.performed += instance.OnSubtractButton;
             @subtractButton.canceled += instance.OnSubtractButton;
+            @rKey.started += instance.OnRKey;
+            @rKey.performed += instance.OnRKey;
+            @rKey.canceled += instance.OnRKey;
         }
 
         private void UnregisterCallbacks(IGameplayActions instance)
@@ -317,6 +343,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @subtractButton.started -= instance.OnSubtractButton;
             @subtractButton.performed -= instance.OnSubtractButton;
             @subtractButton.canceled -= instance.OnSubtractButton;
+            @rKey.started -= instance.OnRKey;
+            @rKey.performed -= instance.OnRKey;
+            @rKey.canceled -= instance.OnRKey;
         }
 
         public void RemoveCallbacks(IGameplayActions instance)
@@ -343,5 +372,6 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         void OnScrollValue(InputAction.CallbackContext context);
         void OnAddButton(InputAction.CallbackContext context);
         void OnSubtractButton(InputAction.CallbackContext context);
+        void OnRKey(InputAction.CallbackContext context);
     }
 }

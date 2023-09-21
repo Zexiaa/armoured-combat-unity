@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,6 +19,8 @@ namespace TankGame
 
         public delegate void MovePlayerAction();
         public static event MovePlayerAction OnMovePlayer;
+
+        public static Action SwitchVehicleTurn;
 
         [SerializeField]
         private List<Vehicle> vehiclesTurnOrder;
@@ -98,6 +101,8 @@ namespace TankGame
             turnCount++;
 
             currentVehicle = vehiclesTurnOrder[turnCount];
+
+            SwitchVehicleTurn();
             SwitchToMovePhase();
         }
     }

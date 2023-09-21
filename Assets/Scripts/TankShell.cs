@@ -3,7 +3,7 @@ using System;
 namespace TankGame
 {
     [Serializable]
-    public struct Shell
+    public struct TankShell
     {
         public enum Category
         {

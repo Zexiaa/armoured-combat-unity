@@ -41,10 +41,10 @@ namespace TankGame
 
         [Header("Ammunition")]
         [SerializeField]
-        private List<Shell> shells;
-        private Shell nextShell;
+        private List<TankShell> shells;
+        private TankShell nextShell;
 
-        private Dictionary<Shell.Category, Shell> shellTypes = new Dictionary<Shell.Category, Shell>();
+        private Dictionary<TankShell.Category, TankShell> shellTypes = new Dictionary<TankShell.Category, TankShell>();
 
         /*
          * GET METHODS
@@ -62,14 +62,14 @@ namespace TankGame
         {
             ResetEnabledStatus();
 
-            foreach (Shell shell in shells)
+            foreach (TankShell shell in shells)
             {
                 shellTypes.Add(shell.shellCategory, shell);
             }
 
             shells.Clear();
 
-            ChangeShellType(Shell.Category.AP);
+            ChangeShellType(TankShell.Category.AP);
         }
 
         void Start()
@@ -81,8 +81,12 @@ namespace TankGame
         void Update()
         {
             if (gunAimLine != null && gunAimLine.enabled)
-                gunAimLine.SetPositions(new Vector3[2] {vehicleGun.transform.position,
-                    vehicleGun.transform.position + vehicleGun.transform.forward * maxAimLineDistance});
+            {
+                Vector3 gunEndPoint = vehicleGun.transform.position + vehicleGun.transform.forward * maxAimLineDistance;
+                gunEndPoint.y = 0;
+
+                gunAimLine.SetPositions(new Vector3[2] {vehicleGun.transform.position, gunEndPoint});
+            }
         }
 
         /*
@@ -113,7 +117,7 @@ namespace TankGame
             }
         }
 
-        public void ChangeShellType(Shell.Category shellCategory)
+        public void ChangeShellType(TankShell.Category shellCategory)
         {
             if (!shellTypes.TryGetValue(shellCategory, out nextShell))
                 Debug.LogWarning("Failed to load next shell of type: " + shellCategory);
@@ -127,9 +131,9 @@ namespace TankGame
 
             shellObj.SetActive(true);
 
-            shellObj.transform.SetPositionAndRotation(gunExitPoint.transform.position, Quaternion.LookRotation(vehicleGun.transform.forward, -shellObj.transform.forward));
+            shellObj.transform.SetPositionAndRotation(gunExitPoint.transform.position, Quaternion.LookRotation(vehicleGun.transform.forward));
 
-            shellObj.GetComponent<ShellPhysics>().ShootShell(VehicleRoot, ranging, nextShell.muzzleVelocity);
+            shellObj.GetComponent<TankShellPhysics>().ShootShell(VehicleRoot, vehicleGun.transform.forward, nextShell.muzzleVelocity);
         }
 
         public float AdjustRanging(bool isUpwards)
@@ -138,6 +142,8 @@ namespace TankGame
                 ranging += rangingStep;
             else
                 ranging -= rangingStep;
+
+            Debug.Log("Set range to: " + ranging);
 
             SetElevation(nextShell.shellCategory);
 
@@ -148,31 +154,33 @@ namespace TankGame
          * PRIVATE METHODS
          */
 
-        private float SetElevation(Shell.Category shellCategory)
+        private void SetElevation(TankShell.Category shellCategory)
         {
-            Shell shell;
+            TankShell shell;
 
             if (shellTypes.TryGetValue(shellCategory, out shell))
             {
-                elevationAngle = RangeToElevation(ranging, shell.muzzleVelocity);
+                elevationAngle = -RangeToElevation(ranging, shell.muzzleVelocity);
 
-                vehicleGun.transform.rotation = Quaternion.Euler(elevationAngle, 0, 0);
+                Debug.Log("Set elevation to " + elevationAngle + " degrees.");
+
+                //vehicleGun.transform.rotation = Quaternion.Euler(elevationAngle, 0, 0);
+
+                vehicleGun.transform.localEulerAngles = new Vector3(elevationAngle, 0, 0);
             }
-
-            return ranging;
         }
 
         private float RangeToElevation(float range, float muzzleVelocity)
         {
-            // 2 * Theta = arcsin((R * g) / (u * u))
+            // From ballistic trajectory equation
+            // angle = 1/2 * arcsin( g * range / (v * v))
 
-            float elevation = Mathf.Asin(
-                (range * ShellPhysics.GravitationalAcceleration) / (muzzleVelocity * muzzleVelocity)
+            float elevationRad = Mathf.Atan(
+                (range * TankShellPhysics.GravitationalAcceleration) / (muzzleVelocity * muzzleVelocity)
                 );
+            elevationRad = elevationRad / 2f * Mathf.Rad2Deg;
 
-            elevation *= 180f / Mathf.PI;
-
-            return elevation / 2;
+            return elevationRad;
         }
     }
 }

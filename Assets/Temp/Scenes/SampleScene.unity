@@ -680,7 +680,7 @@ MonoBehaviour:
   shellExitForce: 1000
   shells:
   - shellCategory: 0
-    muzzleVelocity: 680
+    muzzleVelocity: 68
 --- !u!1 &420864816
 GameObject:
   m_ObjectHideFlags: 0
