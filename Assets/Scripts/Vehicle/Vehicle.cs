@@ -36,8 +36,8 @@ namespace TankGame
         [SerializeField]
         private float turretRotSpeed = 2.0f;
 
-        [SerializeField]
-        private float shellExitForce = 1000.0f;
+        //[SerializeField]
+        //private float shellExitForce = 1000.0f;
 
         [Header("Ammunition")]
         [SerializeField]
@@ -162,7 +162,7 @@ namespace TankGame
             {
                 elevationAngle = -RangeToElevation(ranging, shell.muzzleVelocity);
 
-                Debug.Log("Set elevation to " + elevationAngle + " degrees.");
+                //Debug.Log("Set elevation to " + elevationAngle + " degrees.");
 
                 //vehicleGun.transform.rotation = Quaternion.Euler(elevationAngle, 0, 0);
 

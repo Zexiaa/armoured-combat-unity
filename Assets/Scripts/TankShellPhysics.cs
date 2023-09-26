@@ -7,6 +7,7 @@ namespace TankGame
     public class TankShellPhysics : MonoBehaviour
     {
         public static float GravitationalAcceleration = 9.8f;
+        public static float ShellMaxLifeTime = 10.0f;
 
         private Rigidbody rb;
         private GameObject ignoreCollision;
@@ -34,25 +35,24 @@ namespace TankGame
             float t = Time.time - startTime;
             Vector3 newPosition = CalculateTrajectoryPosition(t);
 
-            if (HasCollisionsInTrajectory(transform.position, CalculateTrajectoryPosition(t)))
+            if (HasCollisionsInTrajectory(transform.position, CalculateTrajectoryPosition(t), out RaycastHit hit))
             {
-                rb.velocity = Vector3.zero;
                 gameObject.SetActive(false);
                 shellInFlight = false;
 
-                Debug.Log("Shell hit " + hitObject);
+                Debug.Log("Shell hit " + hit.transform.gameObject);
+                Debug.Log("Distance travelled: " + NavigationSystem.NavigationGrid.Instance.GetWorldDistance(startPoint, hit.point));
             }
             else
             {
                 rb.MovePosition(newPosition);
 
-                Debug.Log("Distance travelled: " + Vector3.Distance(startPoint, newPosition));
             }
         }
 
         public void ShootShell(GameObject shooter, Vector3 _launchDirection, float _muzzleVelocity)
         {
-            rb.velocity = Vector3.zero;
+            //rb.velocity = Vector3.zero;
 
             ignoreCollision = shooter;
 
@@ -76,17 +76,10 @@ namespace TankGame
             return position;
         }
 
-        private bool HasCollisionsInTrajectory(Vector3 pointA, Vector3 pointB)
+        private bool HasCollisionsInTrajectory(Vector3 currentPoint, Vector3 nextPoint, out RaycastHit hit)
         {
-            RaycastHit hit;
-
-            if (Physics.Raycast(pointA, pointB, out hit))
-            {
-                hitObject = hit.transform.gameObject;
-                return true;
-            }
-
-            return false;
+            return Physics.Raycast(currentPoint, nextPoint - currentPoint, out hit, (nextPoint - currentPoint).magnitude)
+                && hit.transform.gameObject != ignoreCollision;
         }
     }
 }
