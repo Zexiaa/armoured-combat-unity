@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace TankGame
@@ -19,6 +20,12 @@ namespace TankGame
         [SerializeField]
         private LineRenderer gunAimLine;
 
+        [SerializeField]
+        private float rangingStep = 100.0f;
+
+        private float ranging;
+        private float elevationAngle = 0.0f;
+
         [Header("Attributes")]
         [SerializeField]
         private float maxMoveDistance = 10.0f;
@@ -29,8 +36,15 @@ namespace TankGame
         [SerializeField]
         private float turretRotSpeed = 2.0f;
 
+        //[SerializeField]
+        //private float shellExitForce = 1000.0f;
+
+        [Header("Ammunition")]
         [SerializeField]
-        private float shellExitForce = 1000.0f;
+        private List<TankShell> shells;
+        private TankShell nextShell;
+
+        private Dictionary<TankShell.Category, TankShell> shellTypes = new Dictionary<TankShell.Category, TankShell>();
 
         /*
          * GET METHODS
@@ -47,6 +61,17 @@ namespace TankGame
         void Awake()
         {
             ResetEnabledStatus();
+
+            foreach (TankShell shell in shells)
+            {
+                shellTypes.Add(shell.shellCategory, shell);
+            }
+
+            shells.Clear();
+
+            ChangeShellType(TankShell.Category.AP);
+            ranging = 100.0f;
+            SetElevation(nextShell.shellCategory);
         }
 
         void Start()
@@ -58,8 +83,12 @@ namespace TankGame
         void Update()
         {
             if (gunAimLine != null && gunAimLine.enabled)
-                gunAimLine.SetPositions(new Vector3[2] {vehicleGun.transform.position,
-                    vehicleGun.transform.position + vehicleGun.transform.forward * maxAimLineDistance});
+            {
+                Vector3 gunEndPoint = vehicleGun.transform.position + vehicleGun.transform.forward * ranging;
+                //gunEndPoint.y = 0;
+
+                gunAimLine.SetPositions(new Vector3[2] {vehicleGun.transform.position, gunEndPoint});
+            }
         }
 
         /*
@@ -90,13 +119,59 @@ namespace TankGame
             }
         }
 
-        public void FireGun(GameObject shell)
+        public void ChangeShellType(TankShell.Category shellCategory)
         {
-            shell.SetActive(true);
+            if (!shellTypes.TryGetValue(shellCategory, out nextShell))
+                Debug.LogWarning("Failed to load next shell of type: " + shellCategory);
+        }
 
-            shell.transform.SetPositionAndRotation(gunExitPoint.transform.position, Quaternion.LookRotation(vehicleGun.transform.forward, -shell.transform.forward));
+        public void FireGun(GameObject shellObj)
+        {
+            //Shell shell;
+            //if (!shellTypes.TryGetValue(shellCategory, out shell))
+            //    return;
 
-            shell.GetComponent<Rigidbody>().AddForce(vehicleGun.transform.forward * shellExitForce, ForceMode.Force);
+            shellObj.SetActive(true);
+
+            shellObj.transform.SetPositionAndRotation(gunExitPoint.transform.position, Quaternion.LookRotation(vehicleGun.transform.forward));
+
+            shellObj.GetComponent<TankShellPhysics>().ShootShell(VehicleRoot, vehicleGun.transform.forward, nextShell.muzzleVelocity);
+        }
+
+        public float AdjustRanging(bool isUpwards)
+        {
+            if (isUpwards)
+                ranging += rangingStep;
+            else
+                ranging -= rangingStep;
+
+            Debug.Log("Set range to: " + ranging);
+
+            SetElevation(nextShell.shellCategory);
+
+            return ranging;
+        }
+
+        /*
+         * PRIVATE METHODS
+         */
+
+        private void SetElevation(TankShell.Category shellCategory)
+        {
+            if (shellTypes.TryGetValue(shellCategory, out TankShell shell))
+            {
+                elevationAngle = RangeToElevation(ranging);
+
+                vehicleGun.transform.localEulerAngles = new Vector3(elevationAngle, 0, 0);
+            }
+        }
+
+        private float RangeToElevation(float range)
+        {
+            float elevationRad = Mathf.Atan(vehicleGun.transform.position.y / range);
+            elevationRad *= Mathf.Rad2Deg;
+
+            return elevationRad;
         }
     }
 }

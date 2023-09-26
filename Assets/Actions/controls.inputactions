@@ -42,13 +42,40 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "scrollDown",
+                    "name": "scrollValue",
                     "type": "Value",
                     "id": "1b1c2047-ced4-44c9-aece-2fda687c4652",
-                    "expectedControlType": "Axis",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "addButton",
+                    "type": "Button",
+                    "id": "a1460cd7-33df-42cb-aa00-3ed3d1458694",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "subtractButton",
+                    "type": "Button",
+                    "id": "2941d047-a87e-4b29-8b35-75abef3277b5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "rKey",
+                    "type": "Button",
+                    "id": "a9196fe7-22d6-4f81-9d7d-e060a8a3344b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -99,11 +126,44 @@
                 {
                     "name": "",
                     "id": "041d56e3-8f8b-4c5a-94aa-5bd49802a9f1",
-                    "path": "<Mouse>/scroll/down",
+                    "path": "<Mouse>/scroll",
                     "interactions": "Press",
                     "processors": "",
                     "groups": "",
-                    "action": "scrollDown",
+                    "action": "scrollValue",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f891f847-8a82-4d91-915f-3371d6abfca3",
+                    "path": "<Keyboard>/equals",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "addButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0d009207-93ca-4f2b-aa15-1a4b864218b3",
+                    "path": "<Keyboard>/minus",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "subtractButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a1dc8e29-016e-4f8d-932a-3e86c8e1321c",
+                    "path": "<Keyboard>/r",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "",
+                    "action": "rKey",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

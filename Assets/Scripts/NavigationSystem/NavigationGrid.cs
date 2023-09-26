@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
 
 namespace TankGame.NavigationSystem
 {
@@ -133,6 +134,11 @@ namespace TankGame.NavigationSystem
             int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
 
             return grid[x, y];
+        }
+
+        public float GetWorldDistance(Vector3 a, Vector3 b)
+        {
+            return Vector3.Distance(a, b) * NodeDiameter;
         }
 
         /// <summary>

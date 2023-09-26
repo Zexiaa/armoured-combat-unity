@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,6 +19,8 @@ namespace TankGame
 
         public delegate void MovePlayerAction();
         public static event MovePlayerAction OnMovePlayer;
+
+        public static Action SwitchVehicleTurn;
 
         [SerializeField]
         private List<Vehicle> vehiclesTurnOrder;
@@ -71,6 +74,10 @@ namespace TankGame
             fireButton.gameObject.SetActive(true);
         }
 
+        /*
+         * BUTTON METHODS
+         */
+
         public void ClickMove()
         {
             OnMovePlayer();
@@ -83,7 +90,6 @@ namespace TankGame
 
         public void ClickFire()
         {
-            tankShell.GetComponent<ShellPhysics>().SetFirer(currentVehicle.gameObject);
             currentVehicle.FireGun(tankShell);
         }
 
@@ -95,6 +101,8 @@ namespace TankGame
             turnCount++;
 
             currentVehicle = vehiclesTurnOrder[turnCount];
+
+            SwitchVehicleTurn();
             SwitchToMovePhase();
         }
     }

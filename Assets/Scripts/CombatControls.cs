@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace TankGame
 {
-    public class MouseInteraction : MonoBehaviour
+    public class CombatControls : MonoBehaviour
     {
         private Controls actions;
 
@@ -17,6 +17,8 @@ namespace TankGame
         private GameObject moveMarker;
 
         private bool isHoldingRightMouse = false;
+
+        private Vehicle currentVehicle;
 
         void Start()
         {
@@ -44,12 +46,42 @@ namespace TankGame
                 cursorPos = context.ReadValue<Vector2>();
             };
 
+            actions.gameplay.addButton.performed += context =>
+            {
+                PerformIncreaseAction();
+            };
+            
+            actions.gameplay.subtractButton.performed += context =>
+            {
+                PerformDecreaseAction();
+            };
+
+            actions.gameplay.rKey.performed += context =>
+            {
+                PerformRanging();
+            };
+
             moveMarker.SetActive(false);
         }
 
         void Update()
         {
             isCursorOverUI = EventSystem.current.IsPointerOverGameObject();
+        }
+
+        void OnEnable()
+        {
+            TurnManager.SwitchVehicleTurn += SetCurrentVehicle;
+        }
+
+        void OnDisable()
+        {
+            TurnManager.SwitchVehicleTurn -= SetCurrentVehicle;
+        }
+
+        public void SetCurrentVehicle()
+        {
+            currentVehicle = TurnManager.Instance.currentVehicle;
         }
 
         /* 
@@ -87,6 +119,25 @@ namespace TankGame
             }
         }
 
+        private void PerformDecreaseAction()
+        {
+            //TODO set ranging in UI
+
+            TurnManager.Instance.currentVehicle.AdjustRanging(isUpwards: false);
+        }
+
+        private void PerformIncreaseAction()
+        {
+            //TODO set ranging in UI
+
+            TurnManager.Instance.currentVehicle.AdjustRanging(isUpwards: true);
+        }
+
+        private void PerformRanging()
+        {
+            NavigationGrid.Instance.GetWorldDistance(cursorPos, currentVehicle.Position);
+        }
+
         /// <summary>
         /// Sets move marker to click position
         /// </summary>
@@ -100,7 +151,8 @@ namespace TankGame
 
             if (Physics.Raycast(ray, out hit, 100))
             {
-                float dist = Vector3.Distance(hit.point, TurnManager.Instance.currentVehicle.Position) * NavigationGrid.Instance.NodeDiameter;
+                //TODO set current vehicle outside
+                float dist = NavigationGrid.Instance.GetWorldDistance(hit.point, TurnManager.Instance.currentVehicle.Position);
                 float maxDist = TurnManager.Instance.currentVehicle.MaxMoveDistance;
 
                 if (dist < maxDist)
