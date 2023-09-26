@@ -135,7 +135,18 @@ namespace TankGame
 
         private void PerformRanging()
         {
-            NavigationGrid.Instance.GetWorldDistance(cursorPos, currentVehicle.Position);
+            //TODO if there is a vehicle close to cursor, range to vehicle
+            //TODO Show range as text at cursor position
+
+            Ray ray = Camera.main.ScreenPointToRay(cursorPos);
+            RaycastHit hit;
+
+            float dist = 0;
+
+            if (Physics.Raycast(ray, out hit, 100))
+                dist = NavigationGrid.Instance.GetWorldDistance(hit.point, currentVehicle.Position);
+
+            Debug.Log("Range to cursor: " +  dist);
         }
 
         /// <summary>
