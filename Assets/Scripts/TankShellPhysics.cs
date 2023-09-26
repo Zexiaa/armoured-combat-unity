@@ -68,8 +68,6 @@ namespace TankGame
         /// </summary>
         private Vector3 CalculateTrajectoryPosition(float time)
         {
-            //Vector3 position = startPoint + (launchDirection * initialVelocity * time) + (Vector3.down * GravitationalAcceleration * time * time);
-
             Vector3 position = startPoint + (launchDirection * initialVelocity * time);
 
             return position;

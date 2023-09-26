@@ -168,14 +168,6 @@ namespace TankGame
 
         private float RangeToElevation(float range)
         {
-            // From ballistic trajectory equation
-            // angle = 1/2 * arcsin( g * range / (v * v))
-
-            //float elevationRad = Mathf.Atan(
-            //    (range * TankShellPhysics.GravitationalAcceleration) / (muzzleVelocity * muzzleVelocity)
-            //    );
-            //elevationRad = elevationRad / 2f * Mathf.Rad2Deg;
-
             float elevationRad = Mathf.Atan(vehicleGun.transform.position.y / range);
             elevationRad *= Mathf.Rad2Deg;
 
