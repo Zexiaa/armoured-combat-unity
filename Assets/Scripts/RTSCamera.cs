@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 namespace TankGame
@@ -5,6 +7,8 @@ namespace TankGame
     // Referenced from OneWheelStudio (https://github.com/onewheelstudio)
     public class RTSCamera : MonoBehaviour
     {
+        public static RTSCamera Instance { get; private set; }
+
         Controls actions;
 
         /* Screen Position Tracking */
@@ -12,6 +16,9 @@ namespace TankGame
 
         [SerializeField, Range(0f, 1f)]
         private float screenEdgeThreshold = 0.1f;
+
+        public bool shellTrackingEnabled = true;
+        private bool isTracking = false;
 
         /* Camera Movement Calculation */
         private Vector3 targetPos;
@@ -30,8 +37,12 @@ namespace TankGame
         [SerializeField]
         private float maxSpeed = 1.0f;
 
+
         void Start()
         {
+            if (Instance == null)
+                Instance = this;
+
             actions = new Controls();
             actions.Enable();
             
@@ -39,7 +50,22 @@ namespace TankGame
             {
                 cursorPos = context.ReadValue<Vector2>();
             };
+        }
 
+        void OnEnable()
+        {
+            TankShellPhysics.OnShellCollided += () =>
+            {
+                isTracking = false;
+            };
+        }
+
+        void OnDisable()
+        {
+            TankShellPhysics.OnShellCollided -= () =>
+            {
+                isTracking = false;
+            };
         }
 
         void Update()
@@ -48,6 +74,36 @@ namespace TankGame
 
             CalculateCameraVelocity();
             MoveCameraPosition();
+        }
+
+        public void SetCameraTracking(GameObject obj)
+        {
+            if (!shellTrackingEnabled) return;
+
+            isTracking = true;
+
+            StartCoroutine(CameraFollow(obj));
+        }
+
+        private IEnumerator CameraFollow(GameObject obj)
+        {
+            //Vector3 initialPos = transform.position;
+
+            while (isTracking)
+            {
+                RaycastHit hit;
+
+                //TODO only include ground layer
+                if (Physics.Raycast(transform.position, transform.forward, out hit, 100))
+                {
+                    Vector3 trackingPosition = obj.transform.position + (transform.position - hit.point);
+
+                    transform.position = Vector3.MoveTowards(
+                        transform.position, trackingPosition, acceleration * Time.deltaTime);
+                }
+
+                yield return null;
+            }
         }
 
         /*
@@ -87,6 +143,11 @@ namespace TankGame
                 moveDirection += GetCameraForward();
             }
 
+            if (moveDirection != Vector3.zero)
+            {
+                isTracking = false;
+            }
+
             targetPos += moveDirection;
         }
 
@@ -119,5 +180,7 @@ namespace TankGame
 
             targetPos = Vector3.zero;
         }
+
+        
     }
 }

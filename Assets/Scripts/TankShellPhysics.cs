@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace TankGame
 {
     public class TankShellPhysics : MonoBehaviour
     {
+        public static Action OnShellCollided;
+
         //public static float GravitationalAcceleration = 9.8f;
         public static float ShellMaxLifeTime = 10.0f;
 
@@ -20,7 +21,7 @@ namespace TankGame
 
         private bool shellInFlight = true;
 
-        private GameObject hitObject;
+        //private GameObject hitObject;
 
         void Start()
         {
@@ -50,6 +51,8 @@ namespace TankGame
 
                 Debug.Log("Shell hit " + hit.transform.gameObject);
                 Debug.Log("Distance travelled: " + NavigationSystem.NavigationGrid.Instance.GetWorldDistance(startPoint, hit.point));
+
+                OnShellCollided();
             }
             else
             {
@@ -69,6 +72,8 @@ namespace TankGame
 
             startPoint = transform.position;
             startTime = Time.time;
+
+            RTSCamera.Instance.SetCameraTracking(gameObject);
         }
 
         /// <summary>
