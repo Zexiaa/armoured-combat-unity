@@ -52,11 +52,8 @@ namespace TankGame
 
         public void ShootShell(GameObject shooter, Vector3 _launchDirection, float _muzzleVelocity)
         {
-            //rb.velocity = Vector3.zero;
-
             ignoreCollision = shooter;
 
-            //setRange = range;
             initialVelocity = _muzzleVelocity;
             launchDirection = _launchDirection;
 
@@ -71,7 +68,9 @@ namespace TankGame
         /// </summary>
         private Vector3 CalculateTrajectoryPosition(float time)
         {
-            Vector3 position = startPoint + (launchDirection * initialVelocity * time) + (Vector3.down * GravitationalAcceleration * time * time);
+            //Vector3 position = startPoint + (launchDirection * initialVelocity * time) + (Vector3.down * GravitationalAcceleration * time * time);
+
+            Vector3 position = startPoint + (launchDirection * initialVelocity * time);
 
             return position;
         }

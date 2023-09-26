@@ -23,7 +23,7 @@ namespace TankGame
         [SerializeField]
         private float rangingStep = 100.0f;
 
-        private float ranging = 100.0f;
+        private float ranging;
         private float elevationAngle = 0.0f;
 
         [Header("Attributes")]
@@ -70,6 +70,8 @@ namespace TankGame
             shells.Clear();
 
             ChangeShellType(TankShell.Category.AP);
+            ranging = 100.0f;
+            SetElevation(nextShell.shellCategory);
         }
 
         void Start()
@@ -82,8 +84,8 @@ namespace TankGame
         {
             if (gunAimLine != null && gunAimLine.enabled)
             {
-                Vector3 gunEndPoint = vehicleGun.transform.position + vehicleGun.transform.forward * maxAimLineDistance;
-                gunEndPoint.y = 0;
+                Vector3 gunEndPoint = vehicleGun.transform.position + vehicleGun.transform.forward * ranging;
+                //gunEndPoint.y = 0;
 
                 gunAimLine.SetPositions(new Vector3[2] {vehicleGun.transform.position, gunEndPoint});
             }
@@ -156,29 +158,26 @@ namespace TankGame
 
         private void SetElevation(TankShell.Category shellCategory)
         {
-            TankShell shell;
-
-            if (shellTypes.TryGetValue(shellCategory, out shell))
+            if (shellTypes.TryGetValue(shellCategory, out TankShell shell))
             {
-                elevationAngle = -RangeToElevation(ranging, shell.muzzleVelocity);
-
-                //Debug.Log("Set elevation to " + elevationAngle + " degrees.");
-
-                //vehicleGun.transform.rotation = Quaternion.Euler(elevationAngle, 0, 0);
+                elevationAngle = RangeToElevation(ranging);
 
                 vehicleGun.transform.localEulerAngles = new Vector3(elevationAngle, 0, 0);
             }
         }
 
-        private float RangeToElevation(float range, float muzzleVelocity)
+        private float RangeToElevation(float range)
         {
             // From ballistic trajectory equation
             // angle = 1/2 * arcsin( g * range / (v * v))
 
-            float elevationRad = Mathf.Atan(
-                (range * TankShellPhysics.GravitationalAcceleration) / (muzzleVelocity * muzzleVelocity)
-                );
-            elevationRad = elevationRad / 2f * Mathf.Rad2Deg;
+            //float elevationRad = Mathf.Atan(
+            //    (range * TankShellPhysics.GravitationalAcceleration) / (muzzleVelocity * muzzleVelocity)
+            //    );
+            //elevationRad = elevationRad / 2f * Mathf.Rad2Deg;
+
+            float elevationRad = Mathf.Atan(vehicleGun.transform.position.y / range);
+            elevationRad *= Mathf.Rad2Deg;
 
             return elevationRad;
         }
