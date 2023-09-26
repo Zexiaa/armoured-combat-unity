@@ -2589,7 +2589,7 @@ MonoBehaviour:
   blurRadius: 5
   gridWorldSize: {x: 349.7, y: 349.6}
   nodeRadius: 0.5
-  enableGridGizmos: 0
+  enableGridGizmos: 1
   playerVehicle: {fileID: 396608842}
   moveMarker: {fileID: 8094985680336349133}
 --- !u!4 &1784640308

@@ -19,6 +19,8 @@ namespace TankGame.NavigationSystem
         private NavigationGrid grid;
         private NavigationManager navManager;
 
+        private Vector3 _endPos;
+
         void Awake()
         {
             grid = GetComponent<NavigationGrid>();
@@ -42,6 +44,8 @@ namespace TankGame.NavigationSystem
         /// </summary>
         private IEnumerator AStarPathfind(Vector3 startPosition, Vector3 endPosition)
         {
+            _endPos = endPosition;
+
             GridNode startNode = grid.WorldPositionToNode(startPosition);
             GridNode endNode = grid.WorldPositionToNode(endPosition);
 
@@ -56,6 +60,9 @@ namespace TankGame.NavigationSystem
 
             Vector3[] waypoints = new Vector3[0];
             bool pathSuccess = false;
+
+            if (startNode == endNode)
+                waypoints = new List<Vector3> { endPosition }.ToArray();
 
             while (openNodes.Count > 0)
             {
@@ -135,6 +142,8 @@ namespace TankGame.NavigationSystem
         {
             List<Vector3> waypoints = new List<Vector3>();
             Vector2 directionOld = Vector2.zero;
+
+            waypoints.Add(_endPos);
 
             // Check through calculated path
             for (int i = 1; i < path.Count; i++)
