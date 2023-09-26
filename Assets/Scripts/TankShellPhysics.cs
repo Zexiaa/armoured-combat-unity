@@ -6,7 +6,7 @@ namespace TankGame
 {
     public class TankShellPhysics : MonoBehaviour
     {
-        public static float GravitationalAcceleration = 9.8f;
+        //public static float GravitationalAcceleration = 9.8f;
         public static float ShellMaxLifeTime = 10.0f;
 
         private Rigidbody rb;
@@ -33,6 +33,14 @@ namespace TankGame
                 return;
 
             float t = Time.time - startTime;
+
+            if (t >= ShellMaxLifeTime)
+            {
+                gameObject.SetActive(false);
+                shellInFlight = false;
+                return;
+            }
+
             Vector3 newPosition = CalculateTrajectoryPosition(t);
 
             if (HasCollisionsInTrajectory(transform.position, CalculateTrajectoryPosition(t), out RaycastHit hit))
