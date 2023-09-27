@@ -99,7 +99,7 @@ namespace TankGame
 
         protected virtual void OnReachedDestination()
         {
-            //Debug.Log("Arrived at destination.");
+            TurnManager.Instance.SwitchVehiclePhase(TurnManager.ETurnPhase.Shoot);
         }
     }
 }

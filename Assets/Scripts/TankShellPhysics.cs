@@ -39,6 +39,8 @@ namespace TankGame
             {
                 gameObject.SetActive(false);
                 shellInFlight = false;
+
+                OnShellCollided();
                 return;
             }
 

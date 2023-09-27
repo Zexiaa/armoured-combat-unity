@@ -5,30 +5,30 @@ using UnityEngine.UI;
 
 namespace TankGame
 {
-    public enum ETurnPhase
-    {
-        Spot,
-        Move,
-        Shoot,
-        Ammo
-    }
-
     public class TurnManager : MonoBehaviour
     {
+        public enum ETurnPhase
+        {
+            Spot,
+            Move,
+            Shoot,
+            Ammo
+        }
+
         public static TurnManager Instance { get; private set; }
 
         public delegate void MovePlayerAction();
         public static event MovePlayerAction OnMovePlayer;
 
-        public static Action SwitchVehicleTurn;
-
-        [SerializeField]
-        private List<Vehicle> vehiclesTurnOrder;
-        private int turnCount = -1;
+        //public static Action SwitchVehicleTurn;
 
         [HideInInspector]
-        public Vehicle currentVehicle;
+        public ETurnPhase turnPhase;
 
+        [SerializeField]
+        private List<Vehicle> vehicles;
+        private int turnCount = -1;
+        
         [SerializeField]
         private Button moveButton;
 
@@ -37,10 +37,15 @@ namespace TankGame
 
         [SerializeField]
         private GameObject tankShell;
-        
-        [HideInInspector]
-        public ETurnPhase turnPhase;
 
+        [SerializeField]
+        private Projector moveProjection;
+
+        public Vehicle CurrentVehicle
+        {
+            get { return vehicles[turnCount]; }
+        }
+        
         void Start()
         {
             if (Instance == null)
@@ -52,26 +57,68 @@ namespace TankGame
             fireButton.gameObject.SetActive(false);
 
             tankShell.SetActive(false);
+            moveProjection.enabled = false;
 
             NextVehicleTurn();
         }
 
-        public void SwitchToMovePhase()
+        void OnEnable()
         {
-            turnPhase = ETurnPhase.Move;
-
-            currentVehicle.SetMoveRangeActive(true);
-
-            moveButton.gameObject.SetActive(true);
+            TankShellPhysics.OnShellCollided += () =>
+            {
+                SwitchVehiclePhase(ETurnPhase.Ammo);
+            };
         }
 
-        public void SwitchToShootPhase()
+        void OnDisable()
         {
-            turnPhase = ETurnPhase.Shoot;
+            TankShellPhysics.OnShellCollided -= () =>
+            {
+                SwitchVehiclePhase(ETurnPhase.Ammo);
+            };
+        }
 
-            currentVehicle.SetGunAimLineActive(true);
+        public void SwitchVehiclePhase(ETurnPhase phase)
+        {
+            turnPhase = phase;
 
-            fireButton.gameObject.SetActive(true);
+            Debug.Log("Switched to " +  turnPhase);
+
+            switch (turnPhase)
+            {
+                case ETurnPhase.Spot:
+                    CurrentVehicle.StartSpotPhase();
+                    return;
+
+                case ETurnPhase.Move:
+                    CurrentVehicle.StartMovePhase();
+
+                    if (CurrentVehicle.isPlayerControlled)
+                    {
+                        //controller.SetMoveRangeActive(true);
+                        moveButton.gameObject.SetActive(true);
+
+                        moveProjection.transform.position = CurrentVehicle.transform.position;
+                        moveProjection.orthographicSize = CurrentVehicle.MaxMoveDistance;
+                        moveProjection.enabled = true;
+                        
+                    }
+                    return;
+
+                case ETurnPhase.Shoot:
+                    CurrentVehicle.StartShootPhase();
+
+                    if (CurrentVehicle.isPlayerControlled)
+                    {
+                        //currentVehicle.SetGunAimLineActive(true);
+                        fireButton.gameObject.SetActive(true);
+                    }
+                    return;
+
+                case ETurnPhase.Ammo:
+                    CurrentVehicle.StartAmmoPhase();
+                    return;
+            }
         }
 
         /*
@@ -83,27 +130,32 @@ namespace TankGame
             OnMovePlayer();
 
             moveButton.gameObject.SetActive(false);
+            moveProjection.enabled = false;
 
             //TODO allow players to use up full move range
-            currentVehicle.SetMoveRangeActive(false);
         }
 
         public void ClickFire()
         {
-            currentVehicle.FireGun(tankShell);
+            if (CurrentVehicle.isPlayerControlled)
+                CurrentVehicle.FireGun(tankShell);
+
+            fireButton.gameObject.SetActive(false);            
+        }
+
+        public void NextVehicleTurn()
+        {
+            turnCount = (turnCount + 1) % vehicles.Count;
+
+            Debug.Log("Turn of: " + CurrentVehicle);
+            //TODO move camera to vehicle
+            
+
+            SwitchVehiclePhase(ETurnPhase.Move);
         }
 
         /* 
          * PRIVATE METHODS 
          */
-        private void NextVehicleTurn()
-        {
-            turnCount++;
-
-            currentVehicle = vehiclesTurnOrder[turnCount];
-
-            SwitchVehicleTurn();
-            SwitchToMovePhase();
-        }
     }
 }

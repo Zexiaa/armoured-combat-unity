@@ -26,12 +26,5 @@ namespace TankGame
             //TODO check for movement marker 
             NavigationSystem.NavigationManager.CalculatePath(transform.position, moveMarker.transform.position, OnPathFound);
         }
-
-        protected override void OnReachedDestination()
-        {
-            base.OnReachedDestination();
-
-            TurnManager.Instance.SwitchToShootPhase();
-        }
     }
 }

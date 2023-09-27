@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,37 +13,22 @@ namespace TankGame
         public GameObject vehicleGun;
         public GameObject gunExitPoint;
 
-        [SerializeField]
-        private Projector moveRangeProjector;
-
-        [SerializeField]
-        private LineRenderer gunAimLine;
-
-        [SerializeField]
-        private float rangingStep = 100.0f;
-
-        private float ranging;
-        private float elevationAngle = 0.0f;
-
-        [Header("Attributes")]
-        [SerializeField]
-        private float maxMoveDistance = 10.0f;
-
-        [SerializeField]
-        private float maxAimLineDistance = 100.0f;
-
-        [SerializeField]
-        private float turretRotSpeed = 2.0f;
-
-        //[SerializeField]
-        //private float shellExitForce = 1000.0f;
+        protected float ranging = 100.0f;
+        protected float elevationAngle = 0.0f;
 
         [Header("Ammunition")]
         [SerializeField]
-        private List<TankShell> shells;
-        private TankShell nextShell;
+        protected List<TankShell> shells;
+        protected TankShell nextShell;
+        
+        protected Dictionary<TankShell.Category, TankShell> shellTypes = new Dictionary<TankShell.Category, TankShell>();
 
-        private Dictionary<TankShell.Category, TankShell> shellTypes = new Dictionary<TankShell.Category, TankShell>();
+        [Header("Attributes")]
+        [SerializeField]
+        protected float maxMoveDistance = 10.0f;
+
+        [SerializeField]
+        private float turretRotSpeed = 2.0f;
 
         /*
          * GET METHODS
@@ -60,8 +44,6 @@ namespace TankGame
 
         void Awake()
         {
-            ResetEnabledStatus();
-
             foreach (TankShell shell in shells)
             {
                 shellTypes.Add(shell.shellCategory, shell);
@@ -70,53 +52,7 @@ namespace TankGame
             shells.Clear();
 
             ChangeShellType(TankShell.Category.AP);
-            ranging = 100.0f;
-            SetElevation(nextShell.shellCategory);
-        }
-
-        void Start()
-        {
-            maxMoveDistance *= NavigationSystem.NavigationGrid.Instance.NodeDiameter; // 1 Grid node diameter is 1m
-            moveRangeProjector.orthographicSize = maxMoveDistance;
-        }
-
-        void Update()
-        {
-            if (gunAimLine != null && gunAimLine.enabled)
-            {
-                Vector3 gunEndPoint = vehicleGun.transform.position + vehicleGun.transform.forward * ranging;
-                //gunEndPoint.y = 0;
-
-                gunAimLine.SetPositions(new Vector3[2] {vehicleGun.transform.position, gunEndPoint});
-            }
-        }
-
-        /*
-         * CLASS METHODS
-         */
-
-        public void ResetEnabledStatus()
-        {
-            SetMoveRangeActive(false);
-            SetGunAimLineActive(false);
-        }
-
-        public void SetMoveRangeActive(bool isEnabled)
-        {
-            if (moveRangeProjector == null)
-                Debug.LogWarning(VehicleRoot.name + "is missing moveRangeProjector!");
-            else
-                moveRangeProjector.enabled = isEnabled;
-        }
-
-        public void SetGunAimLineActive(bool isEnabled)
-        {
-            if (gunAimLine == null)
-                Debug.LogWarning(VehicleRoot.name + "is missing gunAimLine!");
-            else
-            {
-                gunAimLine.enabled = isEnabled;
-            }
+            SetElevation();
         }
 
         public void ChangeShellType(TankShell.Category shellCategory)
@@ -127,10 +63,6 @@ namespace TankGame
 
         public void FireGun(GameObject shellObj)
         {
-            //Shell shell;
-            //if (!shellTypes.TryGetValue(shellCategory, out shell))
-            //    return;
-
             shellObj.SetActive(true);
 
             shellObj.transform.SetPositionAndRotation(gunExitPoint.transform.position, Quaternion.LookRotation(vehicleGun.transform.forward));
@@ -138,35 +70,44 @@ namespace TankGame
             shellObj.GetComponent<TankShellPhysics>().ShootShell(VehicleRoot, vehicleGun.transform.forward, nextShell.muzzleVelocity);
         }
 
-        public float AdjustRanging(bool isUpwards)
+        public virtual void StartSpotPhase()
         {
-            if (isUpwards)
-                ranging += rangingStep;
-            else
-                ranging -= rangingStep;
+            
+        }
+        public virtual void StartMovePhase()
+        {
+            TurnManager.Instance.NextVehicleTurn();
+        }
 
-            Debug.Log("Set range to: " + ranging);
+        public virtual void StartShootPhase()
+        {
 
-            SetElevation(nextShell.shellCategory);
+        }
 
-            return ranging;
+        public virtual void StartAmmoPhase()
+        {
+
+        }
+
+        public void ChangeRanging(float addValue)
+        {
+            ranging += addValue;
+
+            SetElevation();
         }
 
         /*
-         * PRIVATE METHODS
+         *  PRIVATE METHODS
          */
 
-        private void SetElevation(TankShell.Category shellCategory)
+        protected void SetElevation()
         {
-            if (shellTypes.TryGetValue(shellCategory, out TankShell shell))
-            {
-                elevationAngle = RangeToElevation(ranging);
+            elevationAngle = RangeToElevation(ranging);
 
-                vehicleGun.transform.localEulerAngles = new Vector3(elevationAngle, 0, 0);
-            }
+            vehicleGun.transform.localEulerAngles = new Vector3(elevationAngle, 0, 0);
         }
 
-        private float RangeToElevation(float range)
+        protected float RangeToElevation(float range)
         {
             float elevationRad = Mathf.Atan(vehicleGun.transform.position.y / range);
             elevationRad *= Mathf.Rad2Deg;

@@ -18,7 +18,10 @@ namespace TankGame
 
         private bool isHoldingRightMouse = false;
 
-        private Vehicle currentVehicle;
+        private PlayerVehicle currentVehicle;
+
+        [SerializeField]
+        private float rangeStep = 50.0f;
 
         void Start()
         {
@@ -69,21 +72,6 @@ namespace TankGame
             isCursorOverUI = EventSystem.current.IsPointerOverGameObject();
         }
 
-        void OnEnable()
-        {
-            TurnManager.SwitchVehicleTurn += SetCurrentVehicle;
-        }
-
-        void OnDisable()
-        {
-            TurnManager.SwitchVehicleTurn -= SetCurrentVehicle;
-        }
-
-        public void SetCurrentVehicle()
-        {
-            currentVehicle = TurnManager.Instance.currentVehicle;
-        }
-
         /* 
          * PRIVATE METHODS 
          */
@@ -92,11 +80,11 @@ namespace TankGame
         {
             switch (TurnManager.Instance.turnPhase)
             {
-                case ETurnPhase.Move:
+                case TurnManager.ETurnPhase.Move:
                     SetMoveMarker();
                     return;
 
-                case ETurnPhase.Shoot:
+                case TurnManager.ETurnPhase.Shoot:
                     return;
 
                 default:
@@ -108,8 +96,8 @@ namespace TankGame
         {
             switch (TurnManager.Instance.turnPhase)
             {
-                case ETurnPhase.Shoot:
-                    Vehicle currentVehicle = TurnManager.Instance.currentVehicle;
+                case TurnManager.ETurnPhase.Shoot:
+                    Vehicle currentVehicle = TurnManager.Instance.CurrentVehicle;
 
                     StartCoroutine(AimObjectTowardsCursor(currentVehicle.vehicleTurret, currentVehicle.TurretSpeed));
                     return;
@@ -119,18 +107,17 @@ namespace TankGame
             }
         }
 
-        private void PerformDecreaseAction()
-        {
-            //TODO set ranging in UI
-
-            TurnManager.Instance.currentVehicle.AdjustRanging(isUpwards: false);
-        }
-
         private void PerformIncreaseAction()
         {
             //TODO set ranging in UI
 
-            TurnManager.Instance.currentVehicle.AdjustRanging(isUpwards: true);
+            TurnManager.Instance.CurrentVehicle.ChangeRanging(rangeStep);
+        }
+        private void PerformDecreaseAction()
+        {
+            //TODO set ranging in UI
+
+            TurnManager.Instance.CurrentVehicle.ChangeRanging(-rangeStep);
         }
 
         private void PerformRanging()
@@ -163,8 +150,8 @@ namespace TankGame
             if (Physics.Raycast(ray, out hit, 100))
             {
                 //TODO set current vehicle outside
-                float dist = NavigationGrid.Instance.GetWorldDistance(hit.point, TurnManager.Instance.currentVehicle.Position);
-                float maxDist = TurnManager.Instance.currentVehicle.MaxMoveDistance;
+                float dist = NavigationGrid.Instance.GetWorldDistance(hit.point, TurnManager.Instance.CurrentVehicle.Position);
+                float maxDist = TurnManager.Instance.CurrentVehicle.MaxMoveDistance;
 
                 if (dist < maxDist)
                 {
