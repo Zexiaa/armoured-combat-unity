@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using TankGame.NavigationSystem;
 
-namespace TankGame
+namespace TankGame.Vehicles
 {
     public abstract class VehicleMovement : MonoBehaviour
     {

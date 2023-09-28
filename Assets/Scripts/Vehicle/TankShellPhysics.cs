@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace TankGame
+namespace TankGame.Vehicles
 {
     public class TankShellPhysics : MonoBehaviour
     {

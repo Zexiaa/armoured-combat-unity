@@ -1,7 +1,7 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TankGame.Vehicles;
 
 namespace TankGame
 {
@@ -28,6 +28,9 @@ namespace TankGame
         [SerializeField]
         private List<Vehicle> vehicles;
         private int turnCount = -1;
+
+        [HideInInspector]
+        public GameObject[] playerVehicles;
         
         [SerializeField]
         private Button moveButton;
@@ -45,19 +48,30 @@ namespace TankGame
         {
             get { return vehicles[turnCount]; }
         }
-        
-        void Start()
+
+        void Awake()
         {
             if (Instance == null)
-            {
                 Instance = this;
-            }
+        }
 
+        void Start()
+        {
             moveButton.gameObject.SetActive(false);
             fireButton.gameObject.SetActive(false);
 
             tankShell.SetActive(false);
             moveProjection.enabled = false;
+
+            List<GameObject> players = new List<GameObject>();
+            foreach (Vehicle vehicle in vehicles)
+            {
+                if (!vehicle.isPlayerControlled)
+                    continue;
+
+                players.Add(vehicle.VehicleRoot);
+            }
+            playerVehicles = players.ToArray();
 
             NextVehicleTurn();
         }
@@ -91,8 +105,6 @@ namespace TankGame
                     return;
 
                 case ETurnPhase.Move:
-                    CurrentVehicle.StartMovePhase();
-
                     if (CurrentVehicle.isPlayerControlled)
                     {
                         //controller.SetMoveRangeActive(true);
@@ -103,16 +115,18 @@ namespace TankGame
                         moveProjection.enabled = true;
                         
                     }
+
+                    CurrentVehicle.StartMovePhase();
                     return;
 
                 case ETurnPhase.Shoot:
-                    CurrentVehicle.StartShootPhase();
-
                     if (CurrentVehicle.isPlayerControlled)
                     {
                         //currentVehicle.SetGunAimLineActive(true);
                         fireButton.gameObject.SetActive(true);
                     }
+
+                    CurrentVehicle.StartShootPhase();
                     return;
 
                 case ETurnPhase.Ammo:
@@ -148,8 +162,6 @@ namespace TankGame
             turnCount = (turnCount + 1) % vehicles.Count;
 
             Debug.Log("Turn of: " + CurrentVehicle);
-            //TODO move camera to vehicle
-            
 
             SwitchVehiclePhase(ETurnPhase.Move);
         }

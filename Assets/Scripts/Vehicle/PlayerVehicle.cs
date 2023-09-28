@@ -1,29 +1,11 @@
-using System;
 using UnityEngine;
 
-namespace TankGame
+namespace TankGame.Vehicles
 {
     public class PlayerVehicle : Vehicle
     {
-        //[SerializeField]
-        //private Projector moveRangeProjector;
-
         [SerializeField]
         private LineRenderer gunAimLine;
-
-        //[SerializeField]
-        //private float rangingStep = 100.0f;
-
-        //[SerializeField]
-        //private float maxAimLineDistance = 100.0f;
-
-        //void Start()
-        //{
-        //    ResetEnabledStatus();
-
-        //    maxMoveDistance *= NavigationSystem.NavigationGrid.Instance.NodeDiameter; // 1 Grid node diameter is 1m
-        //    moveRangeProjector.orthographicSize = maxMoveDistance;
-        //}
 
         void Update()
         {

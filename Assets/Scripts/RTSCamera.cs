@@ -37,12 +37,14 @@ namespace TankGame
         [SerializeField]
         private float maxSpeed = 1.0f;
 
-
-        void Start()
+        void Awake()
         {
             if (Instance == null)
                 Instance = this;
+        }
 
+        void Start()
+        {
             actions = new Controls();
             actions.Enable();
             
@@ -54,7 +56,7 @@ namespace TankGame
 
         void OnEnable()
         {
-            TankShellPhysics.OnShellCollided += () =>
+            Vehicles.TankShellPhysics.OnShellCollided += () =>
             {
                 isTracking = false;
             };
@@ -62,7 +64,7 @@ namespace TankGame
 
         void OnDisable()
         {
-            TankShellPhysics.OnShellCollided -= () =>
+            Vehicles.TankShellPhysics.OnShellCollided -= () =>
             {
                 isTracking = false;
             };
@@ -74,6 +76,7 @@ namespace TankGame
 
             CalculateCameraVelocity();
             MoveCameraPosition();
+            
         }
 
         public void SetCameraTracking(GameObject obj)
@@ -85,14 +88,17 @@ namespace TankGame
             StartCoroutine(CameraFollow(obj));
         }
 
+        /*
+         * PRIVATE METHODS
+         */
+
         private IEnumerator CameraFollow(GameObject obj)
         {
             //Vector3 initialPos = transform.position;
 
+            RaycastHit hit;
             while (isTracking)
             {
-                RaycastHit hit;
-
                 //TODO only include ground layer
                 if (Physics.Raycast(transform.position, transform.forward, out hit, 100))
                 {
@@ -104,11 +110,9 @@ namespace TankGame
 
                 yield return null;
             }
-        }
 
-        /*
-         * PRIVATE METHODS
-         */
+            isTracking = false;
+        }
 
         private void CalculateCameraVelocity()
         {
@@ -143,10 +147,8 @@ namespace TankGame
                 moveDirection += GetCameraForward();
             }
 
-            if (moveDirection != Vector3.zero)
-            {
+            if (isTracking && moveDirection != Vector3.zero)
                 isTracking = false;
-            }
 
             targetPos += moveDirection;
         }

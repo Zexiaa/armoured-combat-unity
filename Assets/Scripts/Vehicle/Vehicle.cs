@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TankGame
+namespace TankGame.Vehicles
 {
-    public class Vehicle : MonoBehaviour
+    public abstract class Vehicle : MonoBehaviour
     {
         public bool isPlayerControlled = false;
 
@@ -42,7 +42,7 @@ namespace TankGame
 
         public float TurretSpeed { get { return turretRotSpeed; } }
 
-        void Awake()
+        protected virtual void Awake()
         {
             foreach (TankShell shell in shells)
             {
@@ -70,24 +70,13 @@ namespace TankGame
             shellObj.GetComponent<TankShellPhysics>().ShootShell(VehicleRoot, vehicleGun.transform.forward, nextShell.muzzleVelocity);
         }
 
-        public virtual void StartSpotPhase()
-        {
-            
-        }
-        public virtual void StartMovePhase()
-        {
-            TurnManager.Instance.NextVehicleTurn();
-        }
+        public abstract void StartSpotPhase();
 
-        public virtual void StartShootPhase()
-        {
+        public abstract void StartMovePhase();
 
-        }
+        public abstract void StartShootPhase();
 
-        public virtual void StartAmmoPhase()
-        {
-
-        }
+        public abstract void StartAmmoPhase();
 
         public void ChangeRanging(float addValue)
         {

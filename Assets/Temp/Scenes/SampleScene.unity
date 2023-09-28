@@ -806,7 +806,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   turnPhase: 1
-  vehicles: []
+  vehicles:
+  - {fileID: 396608845}
+  - {fileID: 841777207}
+  playerVehicles: []
   moveButton: {fileID: 1413168554}
   fireButton: {fileID: 1940104956}
   tankShell: {fileID: 2120208219}
@@ -1646,6 +1649,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 841777205}
+  - component: {fileID: 841777207}
   - component: {fileID: 841777206}
   - component: {fileID: 841777203}
   m_Layer: 0
@@ -1702,17 +1706,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 841777202}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f9f920e74d057b4da9e5b217cdd23bd, type: 3}
+  m_Script: {fileID: 11500000, guid: 8c8f5b37ac3769d4c8530e1d145be34a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  turnDistance: 5
+  turnSpeed: 3
+  stopDistance: 3
+--- !u!114 &841777207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841777202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e70c09f1b897fcf4db45a981a9a19eb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isPlayerControlled: 0
-  vehicleHull: {fileID: 0}
-  vehicleTurret: {fileID: 0}
-  vehicleGun: {fileID: 0}
-  gunExitPoint: {fileID: 0}
-  shells: []
+  vehicleHull: {fileID: 1361338225}
+  vehicleTurret: {fileID: 977989664}
+  vehicleGun: {fileID: 1935844920}
+  gunExitPoint: {fileID: 724043189}
+  shells:
+  - shellCategory: 0
+    muzzleVelocity: 68
   maxMoveDistance: 10
   turretRotSpeed: 2
+  distanceLimitFromPlayers: 10
 --- !u!1 &870358403
 GameObject:
   m_ObjectHideFlags: 0

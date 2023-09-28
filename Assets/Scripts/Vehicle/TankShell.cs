@@ -1,6 +1,6 @@
 using System;
 
-namespace TankGame
+namespace TankGame.Vehicles
 {
     [Serializable]
     public struct TankShell
