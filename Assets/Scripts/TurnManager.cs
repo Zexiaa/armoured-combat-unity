@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 using TankGame.Vehicles;
 
 namespace TankGame
@@ -60,7 +62,6 @@ namespace TankGame
             moveButton.gameObject.SetActive(false);
             fireButton.gameObject.SetActive(false);
 
-            tankShell.SetActive(false);
             moveProjection.enabled = false;
 
             List<GameObject> players = new List<GameObject>();
@@ -113,20 +114,19 @@ namespace TankGame
                         moveProjection.transform.position = CurrentVehicle.transform.position;
                         moveProjection.orthographicSize = CurrentVehicle.MaxMoveDistance;
                         moveProjection.enabled = true;
-                        
                     }
 
                     CurrentVehicle.StartMovePhase();
                     return;
 
                 case ETurnPhase.Shoot:
-                    if (CurrentVehicle.isPlayerControlled)
-                    {
-                        //currentVehicle.SetGunAimLineActive(true);
-                        fireButton.gameObject.SetActive(true);
-                    }
-
                     CurrentVehicle.StartShootPhase();
+
+                    if (CurrentVehicle.isPlayerControlled)
+                        fireButton.gameObject.SetActive(true);
+                    else
+                        StartCoroutine(ShootWithDelay());
+
                     return;
 
                 case ETurnPhase.Ammo:
@@ -161,6 +161,7 @@ namespace TankGame
         {
             turnCount = (turnCount + 1) % vehicles.Count;
 
+            Debug.Log("============================================");
             Debug.Log("Turn of: " + CurrentVehicle);
 
             SwitchVehiclePhase(ETurnPhase.Move);
@@ -169,5 +170,11 @@ namespace TankGame
         /* 
          * PRIVATE METHODS 
          */
+
+        private IEnumerator ShootWithDelay()
+        {
+            yield return new WaitForSeconds(1.0f);
+            CurrentVehicle.FireGun(tankShell);
+        }
     }
 }

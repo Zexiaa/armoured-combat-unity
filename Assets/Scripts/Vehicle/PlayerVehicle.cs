@@ -29,7 +29,7 @@ namespace TankGame.Vehicles
 
         public override void StartMovePhase()
         {
-            return; //Skip for now
+            
         }
 
         public override void StartShootPhase()

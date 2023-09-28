@@ -36,7 +36,19 @@ namespace TankGame.Vehicles
 
         public override void StartShootPhase()
         {
-            TurnManager.Instance.NextVehicleTurn(); // Skip for now
+            GameObject player = GetClosestPlayer();
+
+            //TODO "Guess range" to player
+            ranging = Vector3.Distance(transform.position, player.transform.position);
+            Debug.Log("Actual range: " + ranging);
+
+            ranging = Mathf.Max(50.0f, Mathf.RoundToInt(ranging / 50.0f) * 50.0f);
+            Debug.Log("Enemy set range to " + ranging);
+
+            SetElevation();
+
+            Vector3 dirToPlayer = player.transform.position - transform.position;
+            vehicleTurret.transform.rotation = Quaternion.LookRotation(dirToPlayer);
         }
 
         public override void StartAmmoPhase()

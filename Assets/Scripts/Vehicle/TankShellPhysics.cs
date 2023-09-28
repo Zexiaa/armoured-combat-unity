@@ -19,13 +19,12 @@ namespace TankGame.Vehicles
         private Vector3 startPoint;
         private Vector3 launchDirection;
 
-        private bool shellInFlight = true;
-
-        //private GameObject hitObject;
-
+        private bool shellInFlight = false;
+  
         void Start()
         {
             rb = GetComponent<Rigidbody>();
+            EnableShell(false);
         }
 
         void FixedUpdate()
@@ -37,7 +36,7 @@ namespace TankGame.Vehicles
 
             if (t >= ShellMaxLifeTime)
             {
-                gameObject.SetActive(false);
+                EnableShell(false);
                 shellInFlight = false;
 
                 OnShellCollided();
@@ -48,7 +47,7 @@ namespace TankGame.Vehicles
 
             if (HasCollisionsInTrajectory(transform.position, CalculateTrajectoryPosition(t), out RaycastHit hit))
             {
-                gameObject.SetActive(false);
+                EnableShell(false);
                 shellInFlight = false;
 
                 Debug.Log("Shell hit " + hit.transform.gameObject);
@@ -75,6 +74,9 @@ namespace TankGame.Vehicles
             startPoint = transform.position;
             startTime = Time.time;
 
+            transform.GetComponent<TrailRenderer>().Clear();
+            EnableShell(true);
+
             RTSCamera.Instance.SetCameraTracking(gameObject);
         }
 
@@ -92,6 +94,13 @@ namespace TankGame.Vehicles
         {
             return Physics.Raycast(currentPoint, nextPoint - currentPoint, out hit, (nextPoint - currentPoint).magnitude)
                 && hit.transform.gameObject != ignoreCollision;
+        }
+
+        private void EnableShell(bool enabled)
+        {
+            transform.GetComponent<MeshRenderer>().enabled = enabled;
+            transform.GetComponent<CapsuleCollider>().enabled = enabled;
+            transform.GetComponent<TrailRenderer>().emitting = enabled;
         }
     }
 }

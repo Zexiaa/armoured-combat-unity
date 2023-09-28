@@ -63,8 +63,6 @@ namespace TankGame.Vehicles
 
         public void FireGun(GameObject shellObj)
         {
-            shellObj.SetActive(true);
-
             shellObj.transform.SetPositionAndRotation(gunExitPoint.transform.position, Quaternion.LookRotation(vehicleGun.transform.forward));
 
             shellObj.GetComponent<TankShellPhysics>().ShootShell(VehicleRoot, vehicleGun.transform.forward, nextShell.muzzleVelocity);
