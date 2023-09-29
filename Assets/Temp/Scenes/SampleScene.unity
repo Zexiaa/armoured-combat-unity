@@ -591,6 +591,7 @@ GameObject:
   - component: {fileID: 396608845}
   - component: {fileID: 396608843}
   - component: {fileID: 396608844}
+  - component: {fileID: 396608846}
   m_Layer: 0
   m_Name: Player Tank
   m_TagString: Untagged
@@ -629,7 +630,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   turnDistance: 1
-  turnSpeed: 6
+  turnSpeed: 3
   stopDistance: 2
   moveMarker: {fileID: 8094985680336349133}
 --- !u!65 &396608844
@@ -676,6 +677,33 @@ MonoBehaviour:
   maxMoveDistance: 20
   turretRotSpeed: 2
   gunAimLine: {fileID: 665468590}
+--- !u!54 &396608846
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 396608841}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &420864816
 GameObject:
   m_ObjectHideFlags: 0
@@ -1652,6 +1680,7 @@ GameObject:
   - component: {fileID: 841777207}
   - component: {fileID: 841777206}
   - component: {fileID: 841777203}
+  - component: {fileID: 841777208}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -1736,6 +1765,33 @@ MonoBehaviour:
   maxMoveDistance: 10
   turretRotSpeed: 2
   distanceLimitFromPlayers: 10
+--- !u!54 &841777208
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841777202}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &870358403
 GameObject:
   m_ObjectHideFlags: 0
@@ -2081,7 +2137,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   screenEdgeThreshold: 0.05
-  shellTrackingEnabled: 1
+  shellTrackingEnabled: 0
   acceleration: 1
   deceleration: 4
   maxSpeed: 20
@@ -3295,6 +3351,10 @@ PrefabInstance:
     - target: {fileID: 1800461972276467642, guid: 536e1ccd2076ed048a5aa0d91784a64f, type: 3}
       propertyPath: m_Name
       value: Shell
+      objectReference: {fileID: 0}
+    - target: {fileID: 5315845321763212278, guid: 536e1ccd2076ed048a5aa0d91784a64f, type: 3}
+      propertyPath: m_Time
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 9174209378124156028, guid: 536e1ccd2076ed048a5aa0d91784a64f, type: 3}
       propertyPath: m_LocalPosition.x

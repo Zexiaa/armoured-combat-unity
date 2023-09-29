@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 using TankGame.NavigationSystem;
+using Unity.VisualScripting;
 
 namespace TankGame.Vehicles
 {
@@ -23,7 +24,15 @@ namespace TankGame.Vehicles
         protected float stopDistance = 3;
 
         Path path;
-        
+        Rigidbody rb;
+
+        private float forward = 1;
+
+        void Start()
+        {
+            rb = GetComponent<Rigidbody>();
+        }
+
         public void OnDrawGizmos()
         {
             if (path != null)
@@ -55,7 +64,16 @@ namespace TankGame.Vehicles
             bool isFollowingPath = true;
             int pathIndex = 0;
 
-            transform.LookAt(path.lookPoints[0]);
+            //transform.LookAt(path.lookPoints[0]);
+            //Traverse to point
+            //PivotVehicleTowards(path.lookPoints[0]);
+
+            // while (notFacingTarget)
+            // calculate direction from vehicle
+            // if direction is in front half, point towards direction
+            // else point back towards direction
+
+            yield return PivotVehicleTowards(path.lookPoints[0]);
 
             float speedPercent = 1;
 
@@ -87,10 +105,11 @@ namespace TankGame.Vehicles
                     }
                 }
 
-                // Perform vehicle movement
-                Quaternion targetRotation = Quaternion.LookRotation(path.lookPoints[pathIndex] - transform.position);
-                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-                transform.Translate(Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
+                // Perform vehicle movement and smooth turning
+                //Quaternion targetRotation = Quaternion.LookRotation(path.lookPoints[pathIndex] - transform.position);
+                //transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+                //transform.Translate(Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
+                //rb.AddForce(forward * transform.forward * Time.deltaTime * speed * speedPercent);
                 
                 yield return null;
             }
@@ -98,9 +117,37 @@ namespace TankGame.Vehicles
             OnReachedDestination();
         }
 
+        private IEnumerator PivotVehicleTowards(Vector3 lookPoint)
+        {
+            bool isFacingDirection = false;
+
+            //int rotation = 1; // Clockwise rotation
+            Vector3 lookDir = (path.lookPoints[0] - transform.position).normalized;
+
+            // If waypoint is behind
+            if (Vector3.Dot(transform.forward, lookDir) < 0)
+            {
+                forward = -1;
+            }
+
+            while (!isFacingDirection)
+            {
+                rb.AddTorque(transform.up * turnSpeed * 1);
+
+                Debug.Log(Vector3.Dot(forward * transform.forward, lookDir));
+                yield return null;
+
+                if (Vector3.Dot(forward * transform.forward, lookDir) >= 0.98f)
+                    isFacingDirection = true;
+            }
+
+            yield break;
+        }
+
         protected virtual void OnReachedDestination()
         {
             TurnManager.Instance.SwitchVehiclePhase(TurnManager.ETurnPhase.Shoot);
         }
+
     }
 }
