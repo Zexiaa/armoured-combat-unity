@@ -131,7 +131,7 @@ namespace TankGame.Vehicles
             }
 
             float rotationDir = Vector3.SignedAngle(forward * transform.forward, lookDir, Vector3.up);
-            rotationDir = rotationDir == 0.0f ? 1 : Mathf.Clamp(rotationDir, -1, 1);
+            rotationDir = rotationDir >= 0.0f ? 1 : -1;
 
             while (!isFacingDirection)
             {
