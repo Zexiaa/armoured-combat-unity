@@ -3,6 +3,7 @@ using UnityEngine;
 
 using TankGame.NavigationSystem;
 using Unity.VisualScripting;
+using UnityEngine.InputSystem.Processors;
 
 namespace TankGame.Vehicles
 {
@@ -121,7 +122,6 @@ namespace TankGame.Vehicles
         {
             bool isFacingDirection = false;
 
-            //int rotation = 1; // Clockwise rotation
             Vector3 lookDir = (path.lookPoints[0] - transform.position).normalized;
 
             // If waypoint is behind
@@ -130,18 +130,18 @@ namespace TankGame.Vehicles
                 forward = -1;
             }
 
+            float rotationDir = Vector3.SignedAngle(forward * transform.forward, lookDir, Vector3.up);
+            rotationDir = rotationDir == 0.0f ? 1 : Mathf.Clamp(rotationDir, -1, 1);
+
             while (!isFacingDirection)
             {
-                rb.AddTorque(transform.up * turnSpeed * 1);
+                rb.AddTorque(transform.up * turnSpeed * rotationDir);
 
-                Debug.Log(Vector3.Dot(forward * transform.forward, lookDir));
                 yield return null;
 
                 if (Vector3.Dot(forward * transform.forward, lookDir) >= 0.98f)
                     isFacingDirection = true;
             }
-
-            yield break;
         }
 
         protected virtual void OnReachedDestination()
