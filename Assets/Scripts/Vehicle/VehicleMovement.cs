@@ -107,11 +107,12 @@ namespace TankGame.Vehicles
                 }
 
                 // Perform vehicle movement and smooth turning
-                //Quaternion targetRotation = Quaternion.LookRotation(path.lookPoints[pathIndex] - transform.position);
-                //transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-                //transform.Translate(Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
-                //rb.AddForce(forward * transform.forward * Time.deltaTime * speed * speedPercent);
-                
+                Quaternion targetRotation = Quaternion.LookRotation((path.lookPoints[pathIndex] - transform.position) * forward);
+                rb.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+                //transform.Translate(forward * Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
+
+                rb.AddForce(forward * transform.forward * speed * speedPercent);
+
                 yield return null;
             }
 
