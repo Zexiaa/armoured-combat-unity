@@ -1,16 +1,33 @@
 using System.Collections;
-using UnityEngine;
-
+using System.Collections.Generic;
 using TankGame.NavigationSystem;
-using Unity.VisualScripting;
-using UnityEngine.InputSystem.Processors;
+using UnityEngine;
 
 namespace TankGame.Vehicles
 {
+    [System.Serializable]
+    public struct AxleInfo
+    {
+        public WheelCollider leftWheel;
+        public WheelCollider rightWheel;
+        //public bool hasMotor;
+        //public bool hasSteering;
+        public bool isFront;
+    }
+
     public abstract class VehicleMovement : MonoBehaviour
     {
         protected const float DistanceMovedThreshold = .5f;
         protected const float MinPathUpdateTime = .2f;
+
+        [SerializeField]
+        private List<AxleInfo> axleInfos;
+
+        [SerializeField]
+        private float maxTorque = 40;
+
+        [SerializeField]
+        private float maxSteerAngle = 10f;
 
         [SerializeField]
         protected float speed = 5;
@@ -64,18 +81,6 @@ namespace TankGame.Vehicles
         {
             bool isFollowingPath = true;
             int pathIndex = 0;
-
-            //transform.LookAt(path.lookPoints[0]);
-            //Traverse to point
-            //PivotVehicleTowards(path.lookPoints[0]);
-
-            // while (notFacingTarget)
-            // calculate direction from vehicle
-            // if direction is in front half, point towards direction
-            // else point back towards direction
-
-            yield return PivotVehicleTowards(path.lookPoints[0]);
-
             float speedPercent = 1;
 
             while (isFollowingPath)
@@ -90,7 +95,13 @@ namespace TankGame.Vehicles
                         isFollowingPath = false;
                         break;
                     }
-                    
+
+                    foreach (AxleInfo axle in axleInfos)
+                    {
+                        axle.leftWheel.steerAngle = 0;
+                        axle.rightWheel.steerAngle = 0;
+                    }
+
                     pathIndex++;
                 }
 
@@ -106,12 +117,44 @@ namespace TankGame.Vehicles
                     }
                 }
 
+                // Turn
+                Vector3 lookDir = (path.lookPoints[pathIndex] - transform.position).normalized;
+
+                // If waypoint is behind
+                if (Vector3.Dot(transform.forward, lookDir) < 0)
+                {
+                    forward = -1;
+                }
+
+                //float angleToWaypoint = Vector3.Angle(forward * transform.forward, lookDir);
+                //angleToWaypoint = Mathf.Clamp(angleToWaypoint, 0, maxSteerAngle);
+                //if (angleToWaypoint > maxSteerAngle)
+                //    yield return PivotVehicleTowards(lookDir);
+
                 // Perform vehicle movement and smooth turning
-                Quaternion targetRotation = Quaternion.LookRotation((path.lookPoints[pathIndex] - transform.position) * forward);
-                rb.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
+                //Quaternion targetRotation = Quaternion.LookRotation((path.lookPoints[pathIndex] - transform.position) * forward);
+                //rb.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
                 //transform.Translate(forward * Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
 
-                rb.AddForce(forward * transform.forward * speed * speedPercent);
+                //rb.AddForce(forward * transform.forward * speed * speedPercent);
+
+                foreach (AxleInfo axle in axleInfos)
+                {
+                    if (forward > 0 && axle.isFront)
+                    {
+                        axle.leftWheel.motorTorque = forward * maxTorque * speedPercent;
+                        axle.rightWheel.motorTorque = forward * maxTorque * speedPercent;
+                        axle.leftWheel.steerAngle = Vector3.Angle(forward * axle.leftWheel.transform.forward, lookDir);
+                        axle.rightWheel.steerAngle = Vector3.Angle(forward * axle.rightWheel.transform.forward, lookDir);
+                    }
+                    else if (forward < 0 && !axle.isFront)
+                    {
+                        axle.leftWheel.motorTorque = forward * maxTorque * speedPercent;
+                        axle.rightWheel.motorTorque = forward * maxTorque * speedPercent;
+                        axle.leftWheel.steerAngle = Vector3.Angle(forward * axle.leftWheel.transform.forward, lookDir);
+                        axle.rightWheel.steerAngle = Vector3.Angle(forward * axle.rightWheel.transform.forward, lookDir);
+                    }
+                }
 
                 yield return null;
             }
@@ -119,34 +162,52 @@ namespace TankGame.Vehicles
             OnReachedDestination();
         }
 
-        private IEnumerator PivotVehicleTowards(Vector3 lookPoint)
-        {
-            bool isFacingDirection = false;
+        //private IEnumerator PivotVehicleTowards(Vector3 lookDir)
+        //{
+        //    bool isFacingDirection = false;
 
-            Vector3 lookDir = (path.lookPoints[0] - transform.position).normalized;
+        //    float rotationDir = Vector3.SignedAngle(forward * transform.forward, lookDir, Vector3.up);
+        //    rotationDir = rotationDir >= 0.0f ? 1 : -1;
 
-            // If waypoint is behind
-            if (Vector3.Dot(transform.forward, lookDir) < 0)
-            {
-                forward = -1;
-            }
+        //    while (!isFacingDirection)
+        //    {
+        //        //rb.AddTorque(transform.up * turnSpeed * rotationDir);
 
-            float rotationDir = Vector3.SignedAngle(forward * transform.forward, lookDir, Vector3.up);
-            rotationDir = rotationDir >= 0.0f ? 1 : -1;
+        //        foreach (AxleInfo axle in axleInfos)
+        //        {
+        //            if (forward > 0 && axle.isFront)
+        //            {
+        //                axle.leftWheel.motorTorque = forward * maxTorque;
+        //                axle.rightWheel.motorTorque = forward * maxTorque;
+        //                axle.leftWheel.steerAngle = maxSteerAngle * rotationDir;
+        //                axle.rightWheel.steerAngle = maxSteerAngle * rotationDir;
+        //            }
+        //            else if(forward < 0 && !axle.isFront)
+        //            {
+        //                axle.leftWheel.motorTorque = forward * maxTorque;
+        //                axle.rightWheel.motorTorque = forward * maxTorque;
+        //                axle.leftWheel.steerAngle = maxSteerAngle * rotationDir;
+        //                axle.rightWheel.steerAngle = maxSteerAngle * rotationDir;
+        //            }
+        //        }
 
-            while (!isFacingDirection)
-            {
-                rb.AddTorque(transform.up * turnSpeed * rotationDir);
+        //        yield return null;
 
-                yield return null;
-
-                if (Vector3.Dot(forward * transform.forward, lookDir) >= 0.98f)
-                    isFacingDirection = true;
-            }
-        }
+        //        if (Vector3.Dot(forward * transform.forward, lookDir) >= 0.90f)
+        //            isFacingDirection = true;
+        //    }
+        //}
 
         protected virtual void OnReachedDestination()
         {
+            foreach (AxleInfo axle in axleInfos)
+            {
+                axle.leftWheel.motorTorque = 0;
+                axle.rightWheel.motorTorque = 0;
+                axle.leftWheel.steerAngle = 0;
+                axle.rightWheel.steerAngle = 0;
+            }
+
             TurnManager.Instance.SwitchVehiclePhase(TurnManager.ETurnPhase.Shoot);
         }
 
