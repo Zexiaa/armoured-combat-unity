@@ -629,7 +629,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   axleInfos: []
   maxTorque: 40
-  maxSteerAngle: 10
   speed: 10
   turnDistance: 1
   turnSpeed: 3
@@ -3061,6 +3060,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.086
       objectReference: {fileID: 0}
+    - target: {fileID: 3005993307635041087, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 3005993307635041087, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3005993307635041087, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.70710677
+      objectReference: {fileID: 0}
+    - target: {fileID: 3005993307635041087, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3005993307635041087, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 3344573263597480465, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
       propertyPath: m_Name
       value: KV
@@ -3269,6 +3288,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.086
       objectReference: {fileID: 0}
+    - target: {fileID: 7822785670751000081, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071071
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822785670751000081, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822785670751000081, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071065
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822785670751000081, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7822785670751000081, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 7967386920836696125, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
       propertyPath: m_Size.x
       value: 3.1399546
@@ -3324,6 +3363,26 @@ PrefabInstance:
     - target: {fileID: 8660117768033514154, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.086
+      objectReference: {fileID: 0}
+    - target: {fileID: 8660117768033514154, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 8660117768033514154, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8660117768033514154, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.70710677
+      objectReference: {fileID: 0}
+    - target: {fileID: 8660117768033514154, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8660117768033514154, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 9083023324110803035, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
       propertyPath: m_LocalPosition.x

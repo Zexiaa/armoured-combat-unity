@@ -6,12 +6,10 @@ using UnityEngine;
 namespace TankGame.Vehicles
 {
     [System.Serializable]
-    public struct AxleInfo
+    public struct TankAxleInfo
     {
         public WheelCollider leftWheel;
         public WheelCollider rightWheel;
-        //public bool hasMotor;
-        //public bool hasSteering;
         public bool isFront;
     }
 
@@ -21,13 +19,13 @@ namespace TankGame.Vehicles
         protected const float MinPathUpdateTime = .2f;
 
         [SerializeField]
-        private List<AxleInfo> axleInfos;
+        private List<TankAxleInfo> axleInfos;
 
         [SerializeField]
         private float maxTorque = 40;
 
-        [SerializeField]
-        private float maxSteerAngle = 10f;
+        //[SerializeField]
+        //private float maxSteerAngle = 10f;
 
         [SerializeField]
         protected float speed = 5;
@@ -44,7 +42,7 @@ namespace TankGame.Vehicles
         Path path;
         Rigidbody rb;
 
-        private float forward = 1;
+        private float forwardRatio = 1;
 
         void Start()
         {
@@ -96,7 +94,7 @@ namespace TankGame.Vehicles
                         break;
                     }
 
-                    foreach (AxleInfo axle in axleInfos)
+                    foreach (TankAxleInfo axle in axleInfos)
                     {
                         axle.leftWheel.steerAngle = 0;
                         axle.rightWheel.steerAngle = 0;
@@ -123,7 +121,7 @@ namespace TankGame.Vehicles
                 // If waypoint is behind
                 if (Vector3.Dot(transform.forward, lookDir) < 0)
                 {
-                    forward = -1;
+                    forwardRatio = -1;
                 }
 
                 //float angleToWaypoint = Vector3.Angle(forward * transform.forward, lookDir);
@@ -138,21 +136,21 @@ namespace TankGame.Vehicles
 
                 //rb.AddForce(forward * transform.forward * speed * speedPercent);
 
-                foreach (AxleInfo axle in axleInfos)
+                foreach (TankAxleInfo axle in axleInfos)
                 {
-                    if (forward > 0 && axle.isFront)
+                    axle.leftWheel.motorTorque = forwardRatio * maxTorque * speedPercent;
+                    axle.rightWheel.motorTorque = forwardRatio * maxTorque * speedPercent;
+
+                    if (forwardRatio > 0 && axle.isFront)
                     {
-                        axle.leftWheel.motorTorque = forward * maxTorque * speedPercent;
-                        axle.rightWheel.motorTorque = forward * maxTorque * speedPercent;
-                        axle.leftWheel.steerAngle = Vector3.Angle(forward * axle.leftWheel.transform.forward, lookDir);
-                        axle.rightWheel.steerAngle = Vector3.Angle(forward * axle.rightWheel.transform.forward, lookDir);
+                        axle.leftWheel.steerAngle = Vector3.SignedAngle(axle.leftWheel.transform.forward, lookDir, Vector3.up);
+                        axle.rightWheel.steerAngle = Vector3.SignedAngle(axle.rightWheel.transform.forward, lookDir, Vector3.up);
+
                     }
-                    else if (forward < 0 && !axle.isFront)
+                    else if (forwardRatio < 0 && !axle.isFront)
                     {
-                        axle.leftWheel.motorTorque = forward * maxTorque * speedPercent;
-                        axle.rightWheel.motorTorque = forward * maxTorque * speedPercent;
-                        axle.leftWheel.steerAngle = Vector3.Angle(forward * axle.leftWheel.transform.forward, lookDir);
-                        axle.rightWheel.steerAngle = Vector3.Angle(forward * axle.rightWheel.transform.forward, lookDir);
+                        axle.leftWheel.steerAngle = Vector3.SignedAngle(forwardRatio * axle.leftWheel.transform.forward, lookDir, Vector3.up);
+                        axle.rightWheel.steerAngle = Vector3.SignedAngle(forwardRatio * axle.rightWheel.transform.forward, lookDir, Vector3.up);
                     }
                 }
 
@@ -200,7 +198,7 @@ namespace TankGame.Vehicles
 
         protected virtual void OnReachedDestination()
         {
-            foreach (AxleInfo axle in axleInfos)
+            foreach (TankAxleInfo axle in axleInfos)
             {
                 axle.leftWheel.motorTorque = 0;
                 axle.rightWheel.motorTorque = 0;
