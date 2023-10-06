@@ -24,17 +24,11 @@ namespace TankGame.Vehicles
         [SerializeField]
         private float maxTorque = 40;
 
-        //[SerializeField]
-        //private float maxSteerAngle = 10f;
-
         [SerializeField]
-        protected float speed = 5;
+        private float brakeTorque = 100;
 
         [SerializeField]
         protected float turnDistance = 5;
-        
-        [SerializeField]
-        protected float turnSpeed = 3;
 
         [SerializeField]
         protected float stopDistance = 3;
@@ -42,7 +36,7 @@ namespace TankGame.Vehicles
         Path path;
         Rigidbody rb;
 
-        private float forwardRatio = 1;
+        private float forwardRatio;
 
         void Start()
         {
@@ -85,72 +79,65 @@ namespace TankGame.Vehicles
             {
                 Vector2 pos2D = new Vector2(transform.position.x, transform.position.z);
 
-                // When vehicle has passed the next waypoint turn boundary 
-                while (path.turnBoundaries[pathIndex].hasCrossedLine(pos2D))
+                /*
+                 * When vehicle has passed the next waypoint turn boundary 
+                 */
+                if (path.turnBoundaries[pathIndex].hasCrossedLine(pos2D))
                 {
                     if (pathIndex == path.finishLineIndex)
+                        isFollowingPath = false;
+                    else
+                        pathIndex++;
+                }
+
+                /*
+                 * Slow down before end
+                 */
+                if (pathIndex >= path.slowDownIndex && stopDistance > 0)
+                {
+                    speedPercent = Vector3.Distance(transform.position, path.lookPoints[path.finishLineIndex]);
+                    Debug.Log(speedPercent);
+                    speedPercent = Mathf.Clamp01(speedPercent / stopDistance);
+
+                    if (speedPercent < 0.2f)
                     {
                         isFollowingPath = false;
                         break;
                     }
-
-                    foreach (TankAxleInfo axle in axleInfos)
-                    {
-                        axle.leftWheel.steerAngle = 0;
-                        axle.rightWheel.steerAngle = 0;
-                    }
-
-                    pathIndex++;
                 }
 
-                // Slow down before end
-                if (pathIndex >= path.slowDownIndex && stopDistance > 0)
-                {
-                    speedPercent = 
-                        Mathf.Clamp01(path.turnBoundaries[path.finishLineIndex].DistanceFromPoint(pos2D) / stopDistance);
-                        
-                    if (speedPercent < 0.01f)
-                    {
-                        isFollowingPath = false;
-                    }
-                }
 
-                // Turn
+                /*
+                 * Face vehicle towards direction
+                 */
                 Vector3 lookDir = (path.lookPoints[pathIndex] - transform.position).normalized;
 
-                // If waypoint is behind
+                // Waypoint is behind
                 if (Vector3.Dot(transform.forward, lookDir) < 0)
-                {
                     forwardRatio = -1;
-                }
+                else
+                    forwardRatio = 1;
 
-                //float angleToWaypoint = Vector3.Angle(forward * transform.forward, lookDir);
-                //angleToWaypoint = Mathf.Clamp(angleToWaypoint, 0, maxSteerAngle);
-                //if (angleToWaypoint > maxSteerAngle)
-                //    yield return PivotVehicleTowards(lookDir);
-
-                // Perform vehicle movement and smooth turning
-                //Quaternion targetRotation = Quaternion.LookRotation((path.lookPoints[pathIndex] - transform.position) * forward);
-                //rb.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-                //transform.Translate(forward * Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
-
-                //rb.AddForce(forward * transform.forward * speed * speedPercent);
+                float angleToDir = Vector3.SignedAngle(forwardRatio * transform.forward, lookDir, Vector3.up);
+                float directionModifier = Mathf.Clamp(Mathf.Abs(angleToDir), 0.0f, 10.0f);
 
                 foreach (TankAxleInfo axle in axleInfos)
                 {
-                    axle.leftWheel.motorTorque = forwardRatio * maxTorque * speedPercent;
-                    axle.rightWheel.motorTorque = forwardRatio * maxTorque * speedPercent;
+                    axle.leftWheel.motorTorque = forwardRatio * maxTorque * directionModifier;
+                    axle.rightWheel.motorTorque = forwardRatio * maxTorque * directionModifier;
+                    axle.leftWheel.brakeTorque = brakeTorque * (1 - speedPercent);
+                    axle.rightWheel.brakeTorque = brakeTorque * (1 - speedPercent);
 
                     if (forwardRatio > 0 && axle.isFront)
                     {
-                        axle.leftWheel.steerAngle = Vector3.SignedAngle(axle.leftWheel.transform.forward, lookDir, Vector3.up);
-                        axle.rightWheel.steerAngle = Vector3.SignedAngle(axle.rightWheel.transform.forward, lookDir, Vector3.up);
+                        axle.leftWheel.steerAngle = angleToDir * speedPercent;
+                        axle.rightWheel.steerAngle = angleToDir * speedPercent;
 
                     }
                     else if (forwardRatio < 0 && !axle.isFront)
                     {
-                        axle.leftWheel.steerAngle = Vector3.SignedAngle(forwardRatio * axle.leftWheel.transform.forward, lookDir, Vector3.up);
-                        axle.rightWheel.steerAngle = Vector3.SignedAngle(forwardRatio * axle.rightWheel.transform.forward, lookDir, Vector3.up);
+                        axle.leftWheel.steerAngle = angleToDir * speedPercent;
+                        axle.rightWheel.steerAngle = angleToDir * speedPercent;
                     }
                 }
 
@@ -160,54 +147,19 @@ namespace TankGame.Vehicles
             OnReachedDestination();
         }
 
-        //private IEnumerator PivotVehicleTowards(Vector3 lookDir)
-        //{
-        //    bool isFacingDirection = false;
-
-        //    float rotationDir = Vector3.SignedAngle(forward * transform.forward, lookDir, Vector3.up);
-        //    rotationDir = rotationDir >= 0.0f ? 1 : -1;
-
-        //    while (!isFacingDirection)
-        //    {
-        //        //rb.AddTorque(transform.up * turnSpeed * rotationDir);
-
-        //        foreach (AxleInfo axle in axleInfos)
-        //        {
-        //            if (forward > 0 && axle.isFront)
-        //            {
-        //                axle.leftWheel.motorTorque = forward * maxTorque;
-        //                axle.rightWheel.motorTorque = forward * maxTorque;
-        //                axle.leftWheel.steerAngle = maxSteerAngle * rotationDir;
-        //                axle.rightWheel.steerAngle = maxSteerAngle * rotationDir;
-        //            }
-        //            else if(forward < 0 && !axle.isFront)
-        //            {
-        //                axle.leftWheel.motorTorque = forward * maxTorque;
-        //                axle.rightWheel.motorTorque = forward * maxTorque;
-        //                axle.leftWheel.steerAngle = maxSteerAngle * rotationDir;
-        //                axle.rightWheel.steerAngle = maxSteerAngle * rotationDir;
-        //            }
-        //        }
-
-        //        yield return null;
-
-        //        if (Vector3.Dot(forward * transform.forward, lookDir) >= 0.90f)
-        //            isFacingDirection = true;
-        //    }
-        //}
-
         protected virtual void OnReachedDestination()
         {
             foreach (TankAxleInfo axle in axleInfos)
             {
-                axle.leftWheel.motorTorque = 0;
-                axle.rightWheel.motorTorque = 0;
                 axle.leftWheel.steerAngle = 0;
                 axle.rightWheel.steerAngle = 0;
+                axle.leftWheel.motorTorque = 0;
+                axle.rightWheel.motorTorque = 0;
+                axle.leftWheel.brakeTorque = brakeTorque;
+                axle.rightWheel.brakeTorque = brakeTorque;
             }
 
             TurnManager.Instance.SwitchVehiclePhase(TurnManager.ETurnPhase.Shoot);
         }
-
     }
 }

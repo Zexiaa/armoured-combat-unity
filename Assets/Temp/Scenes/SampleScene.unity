@@ -216,7 +216,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &137728775
 Transform:
   m_ObjectHideFlags: 0
@@ -629,9 +629,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   axleInfos: []
   maxTorque: 40
-  speed: 10
+  brakeTorque: 100
   turnDistance: 1
-  turnSpeed: 3
   stopDistance: 2
   moveMarker: {fileID: 8094985680336349133}
 --- !u!65 &396608844
@@ -3090,7 +3089,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3346387698210914511, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
       propertyPath: m_Drag
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3346387698210914511, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
       propertyPath: m_Mass
@@ -3150,7 +3149,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4823863519549702215, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
       propertyPath: maxTorque
-      value: 5000
+      value: 70000
       objectReference: {fileID: 0}
     - target: {fileID: 4823863519549702215, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
       propertyPath: turnSpeed
@@ -3160,6 +3159,14 @@ PrefabInstance:
       propertyPath: moveMarker
       value: 
       objectReference: {fileID: 8094985680336349133}
+    - target: {fileID: 4823863519549702215, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: brakeTorque
+      value: 100000
+      objectReference: {fileID: 0}
+    - target: {fileID: 4823863519549702215, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
+      propertyPath: stopDistance
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 4823863519549702215, guid: c9881b552d3a49c47a2a2a380b622e3e, type: 3}
       propertyPath: maxSteerAngle
       value: 40

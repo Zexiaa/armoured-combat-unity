@@ -143,7 +143,7 @@ namespace TankGame.NavigationSystem
             List<Vector3> waypoints = new List<Vector3>();
             Vector2 directionOld = Vector2.zero;
 
-            waypoints.Add(_endPos);
+            //waypoints.Add(_endPos);
 
             // Check through calculated path
             for (int i = 1; i < path.Count; i++)
